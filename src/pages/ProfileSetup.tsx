@@ -1,0 +1,340 @@
+import { useState } from "react";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { X, Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+
+const COMMON_ALLERGIES = [
+  "Gluten",
+  "Dairy",
+  "Nuts",
+  "Peanuts",
+  "Shellfish",
+  "Eggs",
+  "Soy",
+  "Fish"
+];
+
+const COMMON_RESTRICTIONS = [
+  "Spicy food",
+  "Raw food",
+  "Pork",
+  "Beef",
+  "Alcohol"
+];
+
+const DIETARY_GOALS = [
+  { id: "healthy", label: "Healthy" },
+  { id: "low-calorie", label: "Low-calorie" },
+  { id: "budget", label: "Budget-friendly" },
+  { id: "high-protein", label: "High-protein" },
+  { id: "vegetarian", label: "Vegetarian" },
+  { id: "vegan", label: "Vegan" },
+  { id: "low-carb", label: "Low-carb" },
+  { id: "keto", label: "Keto" }
+];
+
+export default function ProfileSetup() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  const [allergies, setAllergies] = useState<string[]>([]);
+  const [restrictions, setRestrictions] = useState<string[]>([]);
+  const [hatedIngredients, setHatedIngredients] = useState<string[]>([]);
+  const [favoriteIngredients, setFavoriteIngredients] = useState<string[]>([]);
+  const [goals, setGoals] = useState<string[]>([]);
+  const [newHated, setNewHated] = useState("");
+  const [newFavorite, setNewFavorite] = useState("");
+
+  const toggleItem = (item: string, list: string[], setList: (list: string[]) => void) => {
+    if (list.includes(item)) {
+      setList(list.filter(i => i !== item));
+    } else {
+      setList([...list, item]);
+    }
+  };
+
+  const addIngredient = (value: string, list: string[], setList: (list: string[]) => void, setValue: (val: string) => void) => {
+    if (value.trim() && !list.includes(value.trim())) {
+      setList([...list, value.trim()]);
+      setValue("");
+    }
+  };
+
+  const removeIngredient = (ingredient: string, list: string[], setList: (list: string[]) => void) => {
+    setList(list.filter(i => i !== ingredient));
+  };
+
+  const handleSave = () => {
+    const profile = {
+      allergies,
+      restrictions,
+      hatedIngredients,
+      favoriteIngredients,
+      goals,
+      savedAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem("foodEnoughProfile", JSON.stringify(profile));
+    
+    toast({
+      title: "Profile saved!",
+      description: "We'll remember your preferences next time you scan a menu.",
+    });
+    
+    // Navigate to menu upload after a short delay
+    setTimeout(() => {
+      navigate("/menu");
+    }, 1500);
+  };
+
+  const hasAnyData = allergies.length > 0 || restrictions.length > 0 || 
+                      hatedIngredients.length > 0 || favoriteIngredients.length > 0 || 
+                      goals.length > 0;
+
+  return (
+    <div className="min-h-screen">
+      <Navigation />
+      
+      <div className="pt-32 pb-20 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-foreground mb-3">Set up your food profile</h1>
+            <p className="text-lg text-muted-foreground">
+              Tell us about your preferences so we can recommend the perfect dishes for you.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            {/* Allergies & Restrictions */}
+            <Card className="shadow-soft">
+              <CardHeader>
+                <CardTitle>Allergies & Restrictions</CardTitle>
+                <CardDescription>
+                  Select any allergies or dietary restrictions we should watch out for
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-base mb-3 block">Common Allergies</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {COMMON_ALLERGIES.map(allergy => (
+                      <Badge
+                        key={allergy}
+                        variant={allergies.includes(allergy) ? "default" : "outline"}
+                        className="cursor-pointer px-4 py-2"
+                        onClick={() => toggleItem(allergy, allergies, setAllergies)}
+                      >
+                        {allergy}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className="text-base mb-3 block">Other Restrictions</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {COMMON_RESTRICTIONS.map(restriction => (
+                      <Badge
+                        key={restriction}
+                        variant={restrictions.includes(restriction) ? "default" : "outline"}
+                        className="cursor-pointer px-4 py-2"
+                        onClick={() => toggleItem(restriction, restrictions, setRestrictions)}
+                      >
+                        {restriction}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Hated Ingredients */}
+            <Card className="shadow-soft">
+              <CardHeader>
+                <CardTitle>Hated Ingredients</CardTitle>
+                <CardDescription>
+                  Add ingredients you absolutely can't stand
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2 mb-3">
+                  <Input
+                    placeholder="e.g., cilantro, olives, mushrooms..."
+                    value={newHated}
+                    onChange={(e) => setNewHated(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated);
+                      }
+                    }}
+                  />
+                  <Button 
+                    variant="secondary"
+                    onClick={() => addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated)}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                {hatedIngredients.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {hatedIngredients.map(ingredient => (
+                      <Badge key={ingredient} variant="destructive" className="px-3 py-1">
+                        {ingredient}
+                        <X 
+                          className="w-3 h-3 ml-2 cursor-pointer" 
+                          onClick={() => removeIngredient(ingredient, hatedIngredients, setHatedIngredients)}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Favorite Ingredients */}
+            <Card className="shadow-soft">
+              <CardHeader>
+                <CardTitle>Favorite Ingredients</CardTitle>
+                <CardDescription>
+                  What ingredients do you love to see in your meals?
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2 mb-3">
+                  <Input
+                    placeholder="e.g., salmon, avocado, garlic..."
+                    value={newFavorite}
+                    onChange={(e) => setNewFavorite(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        addIngredient(newFavorite, favoriteIngredients, setFavoriteIngredients, setNewFavorite);
+                      }
+                    }}
+                  />
+                  <Button 
+                    variant="secondary"
+                    onClick={() => addIngredient(newFavorite, favoriteIngredients, setFavoriteIngredients, setNewFavorite)}
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                {favoriteIngredients.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {favoriteIngredients.map(ingredient => (
+                      <Badge key={ingredient} className="px-3 py-1 bg-primary">
+                        {ingredient}
+                        <X 
+                          className="w-3 h-3 ml-2 cursor-pointer" 
+                          onClick={() => removeIngredient(ingredient, favoriteIngredients, setFavoriteIngredients)}
+                        />
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Goals */}
+            <Card className="shadow-soft">
+              <CardHeader>
+                <CardTitle>Dietary Goals</CardTitle>
+                <CardDescription>
+                  Select any goals that matter to you
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {DIETARY_GOALS.map(goal => (
+                    <div key={goal.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={goal.id}
+                        checked={goals.includes(goal.id)}
+                        onCheckedChange={() => toggleItem(goal.id, goals, setGoals)}
+                      />
+                      <Label
+                        htmlFor={goal.id}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        {goal.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Summary Card */}
+            {hasAnyData && (
+              <Card className="bg-gradient-card shadow-soft border-2 border-primary/20">
+                <CardHeader>
+                  <CardTitle className="text-primary">Your Current Profile</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {allergies.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Allergies: </span>
+                      <span className="text-muted-foreground">{allergies.join(", ")}</span>
+                    </div>
+                  )}
+                  {restrictions.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Restrictions: </span>
+                      <span className="text-muted-foreground">{restrictions.join(", ")}</span>
+                    </div>
+                  )}
+                  {hatedIngredients.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Hated: </span>
+                      <span className="text-muted-foreground">{hatedIngredients.join(", ")}</span>
+                    </div>
+                  )}
+                  {favoriteIngredients.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Favorites: </span>
+                      <span className="text-muted-foreground">{favoriteIngredients.join(", ")}</span>
+                    </div>
+                  )}
+                  {goals.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Goals: </span>
+                      <span className="text-muted-foreground">
+                        {goals.map(g => DIETARY_GOALS.find(dg => dg.id === g)?.label).join(", ")}
+                      </span>
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground italic pt-2">
+                    We'll remember this next time you scan a menu.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Save Button */}
+            <div className="flex justify-center pt-4">
+              <Button 
+                variant="hero" 
+                size="lg"
+                onClick={handleSave}
+                disabled={!hasAnyData}
+              >
+                Save profile & continue
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
