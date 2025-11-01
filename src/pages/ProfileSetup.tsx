@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,23 @@ export default function ProfileSetup() {
   const [goals, setGoals] = useState<string[]>([]);
   const [newHated, setNewHated] = useState("");
   const [newFavorite, setNewFavorite] = useState("");
+
+  // Load existing profile from localStorage on mount
+  useEffect(() => {
+    const savedProfile = localStorage.getItem("foodEnoughProfile");
+    if (savedProfile) {
+      try {
+        const profile = JSON.parse(savedProfile);
+        setAllergies(profile.allergies || []);
+        setRestrictions(profile.restrictions || []);
+        setHatedIngredients(profile.hatedIngredients || []);
+        setFavoriteIngredients(profile.favoriteIngredients || []);
+        setGoals(profile.goals || []);
+      } catch (error) {
+        console.error("Failed to load saved profile:", error);
+      }
+    }
+  }, []);
 
   const toggleItem = (item: string, list: string[], setList: (list: string[]) => void) => {
     if (list.includes(item)) {
