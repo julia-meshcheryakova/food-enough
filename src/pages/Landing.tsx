@@ -18,7 +18,8 @@ export default function Landing() {
         <div className="container mx-auto max-w-4xl text-center">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-              Your AI Waiter — helping you find the <span className="text-primary">perfect dish</span>
+              Your AI Waiter — helping you find the <span className="text-primary">perfect dish</span> (or at least good
+              enough ;)
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Upload a menu or snap a photo. We'll tell you which dishes fit your tastes, diet, and goals.
@@ -124,7 +125,7 @@ export default function Landing() {
                 {[
                   "Instant allergy & restriction checking",
                   "Smart recommendations based on your goals",
-                  "Works with any language for any restaurant in the world",
+                  "Works with any restaurant menu",
                 ].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
