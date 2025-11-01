@@ -67,11 +67,14 @@ serve(async (req) => {
 
       const ingredientsLower = dish.ingredients.map((i) => i.toLowerCase());
       const allergensLower = dish.allergens.map((a) => a.toLowerCase());
+      const tagsLower = dish.tags.map((t) => t.toLowerCase());
 
-      // ---- Favorites ----
-      const favMatches = includesAny(ingredientsLower, profile.favoriteIngredients);
-      favMatches.forEach((f) => reasoning.push(`Contains your favorite: ${f}`));
-      score += favMatches.length * SCORE.FAVORITE;
+      // ---- Favorites (check both ingredients and tags) ----
+      const favIngredientsMatches = includesAny(ingredientsLower, profile.favoriteIngredients);
+      const favTagsMatches = includesAny(tagsLower, profile.favoriteIngredients);
+      const allFavMatches = [...new Set([...favIngredientsMatches, ...favTagsMatches])];
+      allFavMatches.forEach((f) => reasoning.push(`Contains your favorite: ${f}`));
+      score += allFavMatches.length * SCORE.FAVORITE;
 
       // ---- Hated ----
       const hateMatches = includesAny(ingredientsLower, profile.hatedIngredients);
