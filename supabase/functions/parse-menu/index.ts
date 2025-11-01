@@ -24,7 +24,7 @@ serve(async (req) => {
   }
 
   try {
-    const { image, text } = await req.json();
+    const { image, text, useCache = true } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
@@ -42,23 +42,27 @@ serve(async (req) => {
     const cacheInput = image || text || "";
     const imageChecksum = await calculateHash(cacheInput);
 
-    // Check cache first
-    console.log("Checking cache for existing result...");
-    const { data: cachedResult, error: cacheError } = await supabase
-      .from("menu_parse_cache")
-      .select("parsed_result")
-      .eq("image_checksum", imageChecksum)
-      .eq("model_name", MODEL_NAME)
-      .single();
+    // Check cache first only if useCache is true
+    if (useCache) {
+      console.log("Checking cache for existing result...");
+      const { data: cachedResult, error: cacheError } = await supabase
+        .from("menu_parse_cache")
+        .select("parsed_result")
+        .eq("image_checksum", imageChecksum)
+        .eq("model_name", MODEL_NAME)
+        .single();
 
-    if (!cacheError && cachedResult) {
-      console.log("Cache hit! Returning cached result");
-      return new Response(JSON.stringify({ dishes: cachedResult.parsed_result, cached: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      if (!cacheError && cachedResult) {
+        console.log("Cache hit! Returning cached result");
+        return new Response(JSON.stringify({ dishes: cachedResult.parsed_result, cached: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      console.log("Cache miss, proceeding with AI parsing...");
+    } else {
+      console.log("Cache disabled, proceeding with AI parsing...");
     }
-
-    console.log("Cache miss, proceeding with AI parsing...");
 
     let menuText = text || "";
 

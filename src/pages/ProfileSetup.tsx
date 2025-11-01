@@ -64,6 +64,7 @@ export default function ProfileSetup() {
   const [goals, setGoals] = useState<string[]>([]);
   const [newHated, setNewHated] = useState("");
   const [newFavorite, setNewFavorite] = useState("");
+  const [useCache, setUseCache] = useState(true);
 
   const toggleItem = (item: string, list: string[], setList: (list: string[]) => void) => {
     if (list.includes(item)) {
@@ -97,6 +98,7 @@ export default function ProfileSetup() {
       hatedIngredients,
       favoriteIngredients,
       goals,
+      useCache,
       savedAt: new Date().toISOString(),
     };
 
@@ -129,6 +131,7 @@ export default function ProfileSetup() {
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
+      useCache: true,
       savedAt: new Date().toISOString(),
     };
 
@@ -342,6 +345,29 @@ export default function ProfileSetup() {
                       </Label>
                     </div>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cache Setting */}
+            <Card className="shadow-soft">
+              <CardHeader>
+                <CardTitle>Menu Parsing Settings</CardTitle>
+                <CardDescription>Configure how menu parsing works</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="use-cache"
+                    checked={useCache}
+                    onCheckedChange={(checked) => setUseCache(checked as boolean)}
+                  />
+                  <Label
+                    htmlFor="use-cache"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    Use cached menu results (faster, may not reflect menu updates)
+                  </Label>
                 </div>
               </CardContent>
             </Card>

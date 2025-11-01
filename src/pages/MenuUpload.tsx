@@ -75,10 +75,15 @@ export default function MenuUpload() {
         });
       }
 
+      // Get cache preference from profile
+      const profileData = localStorage.getItem("foodEnoughProfile");
+      const useCache = profileData ? JSON.parse(profileData).useCache ?? true : true;
+
       const { data, error } = await supabase.functions.invoke("parse-menu", {
         body: {
           image: imageData || null,
           text: menuText || null,
+          useCache,
         },
       });
 
