@@ -29,11 +29,6 @@ export default function Landing() {
                   Try it now
                 </Button>
               </Link>
-              <Link to="/profile">
-                <Button variant="hero" size="lg">
-                  Get started now
-                </Button>
-              </Link>
             </div>
           </div>
         </div>
