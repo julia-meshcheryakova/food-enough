@@ -14,7 +14,7 @@ export default function Landing() {
 
       {/* Hero Section */}
       <section className="relative pt-24 pb-16 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-hero opacity-5"></div>
+        <div className="absolute inset-0 bg-gradient-hero opacity-5 pointer-events-none"></div>
         <div className="container mx-auto max-w-4xl text-center">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
