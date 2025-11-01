@@ -97,7 +97,6 @@ export default function ProfileSetup() {
       hatedIngredients,
       favoriteIngredients,
       goals,
-      useCache: true,
       savedAt: new Date().toISOString(),
     };
 
@@ -130,7 +129,6 @@ export default function ProfileSetup() {
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
-      useCache: true,
       savedAt: new Date().toISOString(),
     };
 
