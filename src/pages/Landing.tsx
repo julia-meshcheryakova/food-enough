@@ -18,8 +18,9 @@ export default function Landing() {
         <div className="container mx-auto max-w-4xl text-center">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-              Your AI Waiter — helping you find the <span className="text-primary">perfect dish</span> (or at least good
-              enough ;)
+              Your AI Waiter — helping you find the <span className="text-primary">perfect dish</span>
+              <br />
+              (or at least good enough ;)
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Upload a menu or snap a photo. We'll tell you which dishes fit your tastes, diet, and goals.
