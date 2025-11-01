@@ -29,6 +29,11 @@ export default function Landing() {
                   Try it now
                 </Button>
               </Link>
+              <Link to="/profile">
+                <Button variant="hero" size="lg">
+                  Get started now
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -42,8 +47,12 @@ export default function Landing() {
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium text-primary">Simple & Fast</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Three simple steps to your perfect meal</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Let AI do the heavy lifting while you enjoy your food</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Three simple steps to your perfect meal
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Let AI do the heavy lifting while you enjoy your food
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -107,7 +116,9 @@ export default function Landing() {
                 <span className="text-sm font-medium text-primary">Powered by AI</span>
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">Never struggle with menu decisions again</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
+                Never struggle with menu decisions again
+              </h2>
 
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Whether you're avoiding allergens, counting calories, or just can't stand cilantro — Food Enough
