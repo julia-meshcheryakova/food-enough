@@ -85,6 +85,10 @@ export default function MenuUpload() {
 
       if (data?.dishes && data.dishes.length > 0) {
         setDishes(data.dishes);
+        
+        // Store parsed menu in localStorage for Results page
+        localStorage.setItem('parsedMenu', JSON.stringify(data.dishes));
+        
         toast({
           title: "Menu analyzed!",
           description: `Found ${data.dishes.length} dishes`,

@@ -2,3 +2,6 @@ project_id = "borxkhboskbdngtrdpsd"
 
 [functions.parse-menu]
 verify_jwt = false
+
+[functions.recommend-dishes]
+verify_jwt = false
