@@ -33,7 +33,7 @@ export default function Results() {
     const fetchRecommendations = async () => {
       try {
         // Get profile and menu from localStorage
-        const profileData = localStorage.getItem('foodProfile');
+        const profileData = localStorage.getItem('foodEnoughProfile');
         const menuData = localStorage.getItem('parsedMenu');
 
         if (!profileData || !menuData) {
@@ -48,8 +48,15 @@ export default function Results() {
 
         const profile = JSON.parse(profileData);
         const menu = JSON.parse(menuData);
+        
+        // Store in session for this page load
+        sessionStorage.setItem("activeProfile", JSON.stringify(profile));
+        sessionStorage.setItem("activeMenu", JSON.stringify(menu));
 
-        console.log("Calling recommend-dishes with:", { profile, menu });
+        console.log("Calling recommend-dishes with:", { 
+          profileName: profile.name,
+          dishCount: menu.dishes?.length 
+        });
 
         // Call the recommend-dishes edge function
         const { data, error } = await supabase.functions.invoke('recommend-dishes', {
@@ -103,7 +110,14 @@ export default function Results() {
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-foreground mb-3">Your Top Recommendations</h1>
             <p className="text-lg text-muted-foreground">
-              Based on your preferences and dietary requirements
+              {(() => {
+                try {
+                  const profile = JSON.parse(sessionStorage.getItem("activeProfile") || "{}");
+                  return profile.name ? `Personalized for ${profile.name}` : "Based on your preferences and dietary requirements";
+                } catch {
+                  return "Based on your preferences and dietary requirements";
+                }
+              })()}
             </p>
           </div>
 

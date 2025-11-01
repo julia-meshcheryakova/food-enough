@@ -101,6 +101,7 @@ export default function ProfileSetup() {
 
   const handleSave = () => {
     const profile = {
+      name: sessionStorage.getItem("currentProfileName") || "Custom",
       allergies,
       restrictions,
       hatedIngredients,
@@ -130,9 +131,23 @@ export default function ProfileSetup() {
     setFavoriteIngredients(preset.favoriteIngredients);
     setGoals(preset.goals);
     
+    // Auto-save preset profile to session
+    const profile = {
+      name: preset.name,
+      allergies: preset.allergies,
+      restrictions: preset.restrictions,
+      hatedIngredients: preset.hatedIngredients,
+      favoriteIngredients: preset.favoriteIngredients,
+      goals: preset.goals,
+      savedAt: new Date().toISOString()
+    };
+    
+    localStorage.setItem("foodEnoughProfile", JSON.stringify(profile));
+    sessionStorage.setItem("currentProfileName", preset.name);
+    
     toast({
-      title: `${preset.name}'s profile loaded!`,
-      description: "You can customize it further or save as is.",
+      title: `${preset.name}'s profile loaded & saved!`,
+      description: "Ready to scan a menu with these preferences.",
     });
   };
 
