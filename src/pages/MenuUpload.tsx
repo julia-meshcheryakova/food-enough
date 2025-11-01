@@ -237,17 +237,22 @@ export default function MenuUpload() {
             <>
               <div className="mb-6 flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-foreground">Found {dishes.length} dishes</h2>
-                <Button
-                  onClick={() => {
-                    setDishes([]);
-                    setImageFile(null);
-                    setImagePreview("");
-                    setMenuText("");
-                  }}
-                  variant="outline"
-                >
-                  Re-analyze
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => {
+                      setDishes([]);
+                      setImageFile(null);
+                      setImagePreview("");
+                      setMenuText("");
+                    }}
+                    variant="outline"
+                  >
+                    Re-analyze
+                  </Button>
+                  <Button onClick={() => navigate("/results")} size="default">
+                    Next: See Recommendations →
+                  </Button>
+                </div>
               </div>
 
               <div className="grid gap-4 mb-8">
@@ -303,11 +308,6 @@ export default function MenuUpload() {
                 ))}
               </div>
 
-              <div className="text-center">
-                <Button onClick={() => navigate("/results")} size="lg" className="px-8">
-                  Next: See Recommendations →
-                </Button>
-              </div>
             </>
           )}
         </div>
