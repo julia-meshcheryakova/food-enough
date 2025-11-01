@@ -128,7 +128,7 @@ export default function ProfileSetup() {
                     {COMMON_ALLERGIES.map(allergy => (
                       <Badge
                         key={allergy}
-                        variant={allergies.includes(allergy) ? "default" : "outline"}
+                        variant={allergies.includes(allergy) ? "destructive" : "outline"}
                         className="cursor-pointer px-4 py-2"
                         onClick={() => toggleItem(allergy, allergies, setAllergies)}
                       >
@@ -144,7 +144,7 @@ export default function ProfileSetup() {
                     {COMMON_RESTRICTIONS.map(restriction => (
                       <Badge
                         key={restriction}
-                        variant={restrictions.includes(restriction) ? "default" : "outline"}
+                        variant={restrictions.includes(restriction) ? "destructive" : "outline"}
                         className="cursor-pointer px-4 py-2"
                         onClick={() => toggleItem(restriction, restrictions, setRestrictions)}
                       >
