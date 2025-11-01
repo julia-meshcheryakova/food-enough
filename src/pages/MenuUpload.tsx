@@ -32,7 +32,7 @@ export default function MenuUpload() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         toast({
           title: "Invalid file",
           description: "Please upload an image file",
@@ -40,7 +40,7 @@ export default function MenuUpload() {
         });
         return;
       }
-      
+
       setImageFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -63,7 +63,7 @@ export default function MenuUpload() {
     setIsAnalyzing(true);
     try {
       let imageData = "";
-      
+
       if (imageFile) {
         // Convert image to base64
         const reader = new FileReader();
@@ -74,21 +74,21 @@ export default function MenuUpload() {
         });
       }
 
-      const { data, error } = await supabase.functions.invoke('parse-menu', {
+      const { data, error } = await supabase.functions.invoke("parse-menu", {
         body: {
           image: imageData || null,
           text: menuText || null,
-        }
+        },
       });
 
       if (error) throw error;
 
       if (data?.dishes && data.dishes.length > 0) {
         setDishes(data.dishes);
-        
+
         // Store parsed menu in localStorage for Results page
-        localStorage.setItem('parsedMenu', JSON.stringify(data.dishes));
-        
+        localStorage.setItem("parsedMenu", JSON.stringify(data.dishes));
+
         toast({
           title: "Menu analyzed!",
           description: `Found ${data.dishes.length} dishes`,
@@ -101,7 +101,7 @@ export default function MenuUpload() {
         });
       }
     } catch (error) {
-      console.error('Error analyzing menu:', error);
+      console.error("Error analyzing menu:", error);
       toast({
         title: "Analysis failed",
         description: "Please try again with a different image or text",
@@ -114,27 +114,27 @@ export default function MenuUpload() {
 
   const getCategoryIcon = (category: string) => {
     switch (category.toLowerCase()) {
-      case 'starter':
-        return '🥗';
-      case 'main':
-        return '🍽️';
-      case 'dessert':
-        return '🍰';
-      case 'beverage':
-        return '🥤';
+      case "starter":
+        return "🥗";
+      case "main":
+        return "🍽️";
+      case "dessert":
+        return "🍰";
+      case "beverage":
+        return "🥤";
       default:
-        return '🍴';
+        return "🍴";
     }
   };
 
   const getTagIcon = (tag: string) => {
     switch (tag.toLowerCase()) {
-      case 'spicy':
+      case "spicy":
         return <Flame className="w-4 h-4" />;
-      case 'alcohol':
+      case "alcohol":
         return <Wine className="w-4 h-4" />;
-      case 'vegetarian':
-      case 'vegan':
+      case "vegetarian":
+      case "vegan":
         return <Leaf className="w-4 h-4" />;
       default:
         return null;
@@ -144,14 +144,12 @@ export default function MenuUpload() {
   return (
     <div className="min-h-screen">
       <Navigation />
-      
+
       <div className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold text-foreground mb-3">Upload or scan a menu</h1>
-            <p className="text-lg text-muted-foreground">
-              AI-powered menu analysis with Gemini
-            </p>
+            <p className="text-lg text-muted-foreground">AI-powered menu analysis</p>
           </div>
 
           {!dishes.length ? (
@@ -173,11 +171,7 @@ export default function MenuUpload() {
                       className="hidden"
                       onChange={handleImageUpload}
                     />
-                    <Button
-                      onClick={() => fileInputRef.current?.click()}
-                      variant="outline"
-                      className="w-full"
-                    >
+                    <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="w-full">
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Image
                     </Button>
@@ -242,9 +236,7 @@ export default function MenuUpload() {
           ) : (
             <>
               <div className="mb-6 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-foreground">
-                  Found {dishes.length} dishes
-                </h2>
+                <h2 className="text-2xl font-bold text-foreground">Found {dishes.length} dishes</h2>
                 <Button
                   onClick={() => {
                     setDishes([]);
@@ -268,9 +260,7 @@ export default function MenuUpload() {
                             <span className="text-2xl">{getCategoryIcon(dish.category)}</span>
                             <CardTitle className="text-xl">{dish.name}</CardTitle>
                           </div>
-                          <CardDescription className="text-base">
-                            {dish.description}
-                          </CardDescription>
+                          <CardDescription className="text-base">{dish.description}</CardDescription>
                         </div>
                         <Badge variant="secondary" className="ml-4">
                           {dish.calories} cal
@@ -280,19 +270,13 @@ export default function MenuUpload() {
                     <CardContent>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">
-                            Ingredients:
-                          </p>
-                          <p className="text-sm text-foreground">
-                            {dish.ingredients.join(", ")}
-                          </p>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Ingredients:</p>
+                          <p className="text-sm text-foreground">{dish.ingredients.join(", ")}</p>
                         </div>
 
                         {dish.allergens.length > 0 && (
                           <div>
-                            <p className="text-sm font-medium text-muted-foreground mb-1">
-                              Allergens:
-                            </p>
+                            <p className="text-sm font-medium text-muted-foreground mb-1">Allergens:</p>
                             <div className="flex flex-wrap gap-2">
                               {dish.allergens.map((allergen, i) => (
                                 <Badge key={i} variant="destructive" className="text-xs">
@@ -320,11 +304,7 @@ export default function MenuUpload() {
               </div>
 
               <div className="text-center">
-                <Button
-                  onClick={() => navigate('/results')}
-                  size="lg"
-                  className="px-8"
-                >
+                <Button onClick={() => navigate("/results")} size="lg" className="px-8">
                   Next: See Recommendations →
                 </Button>
               </div>

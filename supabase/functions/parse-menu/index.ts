@@ -2,31 +2,31 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { image, text } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
+
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     console.log("Starting menu parsing...");
-    
+
     let menuText = text || "";
-    
+
     // If image provided, extract text using Gemini Vision
     if (image) {
-      console.log("Extracting text from image with Gemini...");
-      
+      console.log("Extracting text from image...");
+
       const ocrResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -41,16 +41,16 @@ serve(async (req) => {
               content: [
                 {
                   type: "text",
-                  text: "Extract all text from this menu image. Include dish names, descriptions, prices, and any other text visible. Preserve the structure and formatting as much as possible."
+                  text: "Extract all text from this menu image. Include dish names, descriptions, prices, and any other text visible. Preserve the structure and formatting as much as possible.",
                 },
                 {
                   type: "image_url",
                   image_url: {
-                    url: image
-                  }
-                }
-              ]
-            }
+                    url: image,
+                  },
+                },
+              ],
+            },
           ],
         }),
       });
@@ -68,7 +68,7 @@ serve(async (req) => {
 
     // Parse the menu text into structured data
     console.log("Parsing menu into structured format...");
-    
+
     const parseResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -80,7 +80,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a menu parsing expert. Parse menu text into structured JSON format with dishes."
+            content: "You are a menu parsing expert. Parse menu text into structured JSON format with dishes.",
           },
           {
             role: "user",
@@ -97,8 +97,8 @@ Menu text:
 ${menuText}
 
 Return ONLY a valid JSON array, nothing else. Example format:
-[{"name":"Dish Name","description":"Brief description","ingredients":["ingredient1","ingredient2"],"category":"main","calories":450,"allergens":["gluten","dairy"],"tags":["spicy"]}]`
-          }
+[{"name":"Dish Name","description":"Brief description","ingredients":["ingredient1","ingredient2"],"category":"main","calories":450,"allergens":["gluten","dairy"],"tags":["spicy"]}]`,
+          },
         ],
       }),
     });
@@ -111,31 +111,30 @@ Return ONLY a valid JSON array, nothing else. Example format:
 
     const parseData = await parseResponse.json();
     let dishesText = parseData.choices[0].message.content.trim();
-    
+
     // Clean up the response to extract JSON
-    dishesText = dishesText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    
+    dishesText = dishesText
+      .replace(/```json\n?/g, "")
+      .replace(/```\n?/g, "")
+      .trim();
+
     const dishes = JSON.parse(dishesText);
     console.log(`Successfully parsed ${dishes.length} dishes`);
 
-    return new Response(
-      JSON.stringify({ dishes }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
-
+    return new Response(JSON.stringify({ dishes }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("Error in parse-menu function:", error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error instanceof Error ? error.message : "Unknown error occurred",
-        dishes: []
+        dishes: [],
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
     );
   }
 });
