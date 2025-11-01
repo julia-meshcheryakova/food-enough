@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.recommend-dishes]
 verify_jwt = false
+
+[functions.generate-dish-image]
+verify_jwt = false

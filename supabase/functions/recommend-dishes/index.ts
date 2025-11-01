@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 // ---- CORS ----
 const corsHeaders = {
@@ -102,46 +103,47 @@ serve(async (req) => {
       topDishes.map((d) => ({ name: d.name, score: d.score })),
     );
 
-    // ---- Generate Images ----
-    const dishesWithImages = await Promise.all(
+    // Check cache for existing images
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      console.warn("Supabase credentials not configured, returning without images");
+      return new Response(JSON.stringify({ 
+        recommendations: topDishes.map(d => ({ ...d, imageUrl: null })) 
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // Check cache for each dish
+    const dishesWithCachedImages = await Promise.all(
       topDishes.map(async (dish) => {
         try {
-          const imagePrompt = `A beautiful, appetizing photo of ${dish.name}. ${dish.description}. Professional food photography, high quality, well-lit, restaurant-style plating.`;
+          const { data: cached } = await supabase
+            .from("dish_images")
+            .select("image_url")
+            .eq("dish_name", dish.name)
+            .eq("dish_description", dish.description)
+            .maybeSingle();
 
-          console.log(`Generating image for: ${dish.name}`);
-
-          const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "google/gemini-2.5-flash-image-preview",
-              messages: [{ role: "user", content: imagePrompt }],
-              modalities: ["image", "text"],
-            }),
-          });
-
-          if (!response.ok) {
-            console.error(`Image generation failed for ${dish.name}:`, response.status);
-            return { ...dish, imageUrl: null, imageError: true };
+          if (cached?.image_url) {
+            console.log(`Cache hit for: ${dish.name}`);
+            return { ...dish, imageUrl: cached.image_url };
           }
 
-          const data = await response.json();
-          const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-          if (!imageUrl) return { ...dish, imageUrl: null, imageError: true };
-
-          console.log(`Image generated successfully for: ${dish.name}`);
-          return { ...dish, imageUrl, imageError: false };
+          console.log(`No cached image for: ${dish.name}`);
+          return { ...dish, imageUrl: null };
         } catch (error) {
-          console.error(`Error generating image for ${dish.name}:`, error);
-          return { ...dish, imageUrl: null, imageError: true };
+          console.error(`Error checking cache for ${dish.name}:`, error);
+          return { ...dish, imageUrl: null };
         }
-      }),
+      })
     );
 
-    return new Response(JSON.stringify({ recommendations: dishesWithImages }), {
+    return new Response(JSON.stringify({ recommendations: dishesWithCachedImages }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Utensils, Flame, Star, AlertCircle } from "lucide-react";
+import { Utensils, Flame, Star, AlertCircle, Loader2 } from "lucide-react";
 
 interface Dish {
   name: string;
@@ -23,6 +23,7 @@ interface Dish {
   reasoning?: string[];
   imageUrl?: string | null;
   imageError?: boolean;
+  imageLoading?: boolean;
 }
 
 export default function Results() {
@@ -59,7 +60,7 @@ export default function Results() {
           dishCount: menu.dishes?.length 
         });
 
-        // Call the recommend-dishes edge function
+        // Call the recommend-dishes edge function (returns immediately with cached images)
         const { data, error } = await supabase.functions.invoke('recommend-dishes', {
           body: { profile, menu }
         });
@@ -71,7 +72,59 @@ export default function Results() {
 
         console.log("Received recommendations:", data);
 
-        setRecommendations(data.recommendations);
+        // Set recommendations immediately (with or without images)
+        const initialRecommendations = data.recommendations.map((dish: Dish) => ({
+          ...dish,
+          imageLoading: !dish.imageUrl, // Mark as loading if no cached image
+        }));
+        setRecommendations(initialRecommendations);
+        setIsLoading(false);
+
+        // Generate images for dishes without cached images
+        data.recommendations.forEach(async (dish: Dish, index: number) => {
+          if (!dish.imageUrl) {
+            try {
+              console.log(`Generating image for: ${dish.name}`);
+              const { data: imageData, error: imageError } = await supabase.functions.invoke(
+                'generate-dish-image',
+                {
+                  body: {
+                    dishName: dish.name,
+                    dishDescription: dish.description,
+                  },
+                }
+              );
+
+              if (imageError) {
+                console.error(`Failed to generate image for ${dish.name}:`, imageError);
+                setRecommendations((prev) =>
+                  prev.map((d, i) =>
+                    i === index ? { ...d, imageLoading: false, imageError: true } : d
+                  )
+                );
+                return;
+              }
+
+              console.log(`Image generated for ${dish.name}:`, imageData.cached ? 'cached' : 'new');
+              
+              // Update the specific dish with the generated image
+              setRecommendations((prev) =>
+                prev.map((d, i) =>
+                  i === index
+                    ? { ...d, imageUrl: imageData.imageUrl, imageLoading: false }
+                    : d
+                )
+              );
+            } catch (error) {
+              console.error(`Error generating image for ${dish.name}:`, error);
+              setRecommendations((prev) =>
+                prev.map((d, i) =>
+                  i === index ? { ...d, imageLoading: false, imageError: true } : d
+                )
+              );
+            }
+          }
+        });
       } catch (error) {
         console.error('Error fetching recommendations:', error);
         toast({
@@ -79,7 +132,6 @@ export default function Results() {
           description: "Failed to generate recommendations. Please try again.",
           variant: "destructive",
         });
-      } finally {
         setIsLoading(false);
       }
     };
@@ -154,6 +206,10 @@ export default function Results() {
                           alt={dish.name}
                           className="w-full h-48 object-cover"
                         />
+                      ) : dish.imageLoading ? (
+                        <div className="w-full h-48 bg-muted flex items-center justify-center">
+                          <Loader2 className="w-12 h-12 text-primary animate-spin" />
+                        </div>
                       ) : dish.imageError ? (
                         <div className="w-full h-48 bg-muted flex items-center justify-center">
                           <Utensils className="w-12 h-12 text-muted-foreground" />

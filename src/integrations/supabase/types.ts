@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      dish_images: {
+        Row: {
+          created_at: string | null
+          dish_description: string
+          dish_name: string
+          id: string
+          image_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          dish_description: string
+          dish_name: string
+          id?: string
+          image_url: string
+        }
+        Update: {
+          created_at?: string | null
+          dish_description?: string
+          dish_name?: string
+          id?: string
+          image_url?: string
+        }
+        Relationships: []
+      }
       menu_parse_cache: {
         Row: {
           created_at: string | null
