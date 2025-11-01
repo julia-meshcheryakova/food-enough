@@ -28,6 +28,7 @@ export default function Results() {
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState<Dish[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [profileName, setProfileName] = useState<string>("");
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -49,9 +50,8 @@ export default function Results() {
         const profile = JSON.parse(profileData);
         const menu = JSON.parse(menuData);
         
-        // Store in session for this page load
-        sessionStorage.setItem("activeProfile", JSON.stringify(profile));
-        sessionStorage.setItem("activeMenu", JSON.stringify(menu));
+        // Update profile name state
+        setProfileName(profile.name || "");
 
         console.log("Calling recommend-dishes with:", { 
           profileName: profile.name,
@@ -110,14 +110,7 @@ export default function Results() {
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-foreground mb-3">Your Top Recommendations</h1>
             <p className="text-lg text-muted-foreground">
-              {(() => {
-                try {
-                  const profile = JSON.parse(sessionStorage.getItem("activeProfile") || "{}");
-                  return profile.name ? `Personalized for ${profile.name}` : "Based on your preferences and dietary requirements";
-                } catch {
-                  return "Based on your preferences and dietary requirements";
-                }
-              })()}
+              {profileName ? `Personalized for ${profileName}` : "Based on your preferences and dietary requirements"}
             </p>
           </div>
 
