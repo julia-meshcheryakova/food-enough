@@ -14,7 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      menu_parse_cache: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_checksum: string
+          model_name: string
+          parsed_result: Json
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_checksum: string
+          model_name: string
+          parsed_result: Json
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_checksum?: string
+          model_name?: string
+          parsed_result?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

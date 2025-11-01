@@ -1,10 +1,22 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const MODEL_NAME = "google/gemini-2.5-flash-lite";
+
+// Helper function to calculate SHA-256 hash
+async function calculateHash(data: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const dataBuffer = encoder.encode(data);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", dataBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -14,12 +26,39 @@ serve(async (req) => {
   try {
     const { image, text } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Initialize Supabase client
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
+
     console.log("Starting menu parsing...");
+
+    // Calculate checksum for cache key
+    const cacheInput = image || text || "";
+    const imageChecksum = await calculateHash(cacheInput);
+
+    // Check cache first
+    console.log("Checking cache for existing result...");
+    const { data: cachedResult, error: cacheError } = await supabase
+      .from("menu_parse_cache")
+      .select("parsed_result")
+      .eq("image_checksum", imageChecksum)
+      .eq("model_name", MODEL_NAME)
+      .single();
+
+    if (!cacheError && cachedResult) {
+      console.log("Cache hit! Returning cached result");
+      return new Response(JSON.stringify({ dishes: cachedResult.parsed_result, cached: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    console.log("Cache miss, proceeding with AI parsing...");
 
     let menuText = text || "";
 
@@ -34,7 +73,7 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash-lite",
+          model: MODEL_NAME,
           messages: [
             {
               role: "user",
@@ -76,7 +115,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
+        model: MODEL_NAME,
         messages: [
           {
             role: "system",
@@ -121,7 +160,24 @@ Return ONLY a valid JSON array, nothing else. Example format:
     const dishes = JSON.parse(dishesText);
     console.log(`Successfully parsed ${dishes.length} dishes`);
 
-    return new Response(JSON.stringify({ dishes }), {
+    // Store result in cache
+    console.log("Storing result in cache...");
+    const { error: insertError } = await supabase
+      .from("menu_parse_cache")
+      .insert({
+        image_checksum: imageChecksum,
+        model_name: MODEL_NAME,
+        parsed_result: dishes,
+      });
+
+    if (insertError) {
+      console.error("Failed to cache result:", insertError);
+      // Don't fail the request if caching fails
+    } else {
+      console.log("Result cached successfully");
+    }
+
+    return new Response(JSON.stringify({ dishes, cached: false }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
