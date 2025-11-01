@@ -126,8 +126,8 @@ serve(async (req) => {
             content: `Parse this menu text into a JSON array of dishes. For each dish, extract:
 - name: string (dish name)
 - description: string (brief description)
-- ingredients: array of strings (RAW ingredients only, e.g., "eggs" not "fried eggs", "chicken" not "grilled chicken")
-- probable_ingredients: array of strings (standard ingredients typically used but not listed, e.g., "oil", "salt", "sugar", "butter")
+- ingredients: array of strings (RAW ingredients only, e.g., "eggs" not "fried eggs", "chicken" not "grilled chicken, "pork" not "bacon")
+- probable_ingredients: array of strings (standard ingredients typically used but not listed for the dish, e.g., "oil", "salt", "sugar", "butter" or "beef" for "beef burger")
 - category: string (starter, main, dessert, beverage, side, or other)
 - calories: number (estimate if not provided, typical range 200-800)
 - allergens: array of strings (common allergens: dairy, gluten, nuts, shellfish, eggs, soy)
@@ -136,7 +136,7 @@ serve(async (req) => {
 IMPORTANT: 
 - For ingredients, use ONLY raw ingredient names without any descriptors
 - Move all cooking methods and descriptors (fried, grilled, roasted, fresh, etc.) to tags
-- In probable_ingredients, list common cooking staples typically used but not explicitly mentioned
+- In probable_ingredients, list common cooking staples typically used and ingridients for standard receipts that were not explicitly mentioned
 
 Menu text:
 ${menuText}
