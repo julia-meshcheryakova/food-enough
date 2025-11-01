@@ -15,7 +15,7 @@ async function calculateHash(data: string): Promise<string> {
   const dataBuffer = encoder.encode(data);
   const hashBuffer = await crypto.subtle.digest("SHA-256", dataBuffer);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 serve(async (req) => {
@@ -138,7 +138,7 @@ serve(async (req) => {
 - tags: array of strings (cooking methods like "fried", "grilled", "baked", plus dietary tags like "spicy", "vegetarian", "vegan", "alcohol")
 
 IMPORTANT: 
-- For ingredients, use ONLY raw ingredient names without any descriptors
+- For ingredients, use ONLY raw ingredient names without any descriptors: eggs, not poached eggs, salmon, not smoked salmon
 - Move all cooking methods and descriptors (fried, grilled, roasted, fresh, etc.) to tags
 - In probable_ingredients, list common cooking staples typically used and ingridients for standard receipts that were not explicitly mentioned
 
@@ -172,13 +172,11 @@ Return ONLY a valid JSON array, nothing else. Example format:
 
     // Store result in cache
     console.log("Storing result in cache...");
-    const { error: insertError } = await supabase
-      .from("menu_parse_cache")
-      .insert({
-        image_checksum: imageChecksum,
-        model_name: MODEL_NAME,
-        parsed_result: dishes,
-      });
+    const { error: insertError } = await supabase.from("menu_parse_cache").insert({
+      image_checksum: imageChecksum,
+      model_name: MODEL_NAME,
+      parsed_result: dishes,
+    });
 
     if (insertError) {
       console.error("Failed to cache result:", insertError);
