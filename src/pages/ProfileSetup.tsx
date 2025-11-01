@@ -41,6 +41,33 @@ const DIETARY_GOALS = [
   { id: "keto", label: "Keto" }
 ];
 
+const PRESET_PROFILES = {
+  julia: {
+    name: "Julia",
+    allergies: [],
+    restrictions: ["Spicy food", "Alcohol"],
+    hatedIngredients: [],
+    favoriteIngredients: ["salmon", "avocado"],
+    goals: ["healthy", "high-protein"]
+  },
+  alex: {
+    name: "Alex",
+    allergies: [],
+    restrictions: [],
+    hatedIngredients: ["fried food"],
+    favoriteIngredients: ["spicy"],
+    goals: ["healthy"]
+  },
+  child: {
+    name: "Child",
+    allergies: ["Nuts"],
+    restrictions: ["Spicy food", "Alcohol"],
+    hatedIngredients: [],
+    favoriteIngredients: ["pasta", "chicken", "cheese"],
+    goals: ["healthy"]
+  }
+};
+
 export default function ProfileSetup() {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -95,6 +122,20 @@ export default function ProfileSetup() {
     }, 1500);
   };
 
+  const loadPreset = (presetKey: keyof typeof PRESET_PROFILES) => {
+    const preset = PRESET_PROFILES[presetKey];
+    setAllergies(preset.allergies);
+    setRestrictions(preset.restrictions);
+    setHatedIngredients(preset.hatedIngredients);
+    setFavoriteIngredients(preset.favoriteIngredients);
+    setGoals(preset.goals);
+    
+    toast({
+      title: `${preset.name}'s profile loaded!`,
+      description: "You can customize it further or save as is.",
+    });
+  };
+
   const hasAnyData = allergies.length > 0 || restrictions.length > 0 || 
                       hatedIngredients.length > 0 || favoriteIngredients.length > 0 || 
                       goals.length > 0;
@@ -110,6 +151,42 @@ export default function ProfileSetup() {
             <p className="text-lg text-muted-foreground">
               Tell us about your preferences so we can recommend the perfect dishes for you.
             </p>
+            
+            {/* Quick Profile Presets */}
+            <Card className="mt-6 bg-gradient-card border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-lg">Quick Start Profiles</CardTitle>
+                <CardDescription>Load a preset profile and customize it</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => loadPreset("julia")}
+                    className="flex-1 min-w-[140px]"
+                  >
+                    Julia
+                    <Badge variant="secondary" className="ml-2">No Spicy/Alcohol</Badge>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => loadPreset("alex")}
+                    className="flex-1 min-w-[140px]"
+                  >
+                    Alex
+                    <Badge variant="secondary" className="ml-2">Loves Spicy</Badge>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => loadPreset("child")}
+                    className="flex-1 min-w-[140px]"
+                  >
+                    Child
+                    <Badge variant="secondary" className="ml-2">Kid-Friendly</Badge>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="space-y-6">
