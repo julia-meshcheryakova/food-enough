@@ -11,24 +11,9 @@ import { X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-const COMMON_ALLERGIES = [
-  "Gluten",
-  "Dairy",
-  "Nuts",
-  "Peanuts",
-  "Shellfish",
-  "Eggs",
-  "Soy",
-  "Fish"
-];
+const COMMON_ALLERGIES = ["gluten", "dairy", "nuts", "peanuts", "shellfish", "eggs", "soy", "fish"];
 
-const COMMON_RESTRICTIONS = [
-  "Spicy food",
-  "Raw food",
-  "Pork",
-  "Beef",
-  "Alcohol"
-];
+const COMMON_RESTRICTIONS = ["spicy", "raw", "pork", "beef", "alcohol"];
 
 const DIETARY_GOALS = [
   { id: "healthy", label: "Healthy" },
@@ -38,40 +23,40 @@ const DIETARY_GOALS = [
   { id: "vegetarian", label: "Vegetarian" },
   { id: "vegan", label: "Vegan" },
   { id: "low-carb", label: "Low-carb" },
-  { id: "keto", label: "Keto" }
+  { id: "keto", label: "Keto" },
 ];
 
 const PRESET_PROFILES = {
   julia: {
     name: "Julia",
     allergies: [],
-    restrictions: ["Spicy food", "Alcohol"],
+    restrictions: ["spicy", "alcohol"],
     hatedIngredients: [],
     favoriteIngredients: ["salmon", "avocado"],
-    goals: ["healthy", "high-protein"]
+    goals: ["healthy", "high-protein"],
   },
   alex: {
     name: "Alex",
     allergies: [],
     restrictions: [],
-    hatedIngredients: ["fried food"],
+    hatedIngredients: ["pork"],
     favoriteIngredients: ["spicy"],
-    goals: ["healthy"]
+    goals: ["healthy"],
   },
   child: {
     name: "Child",
-    allergies: ["Nuts"],
-    restrictions: ["Spicy food", "Alcohol"],
+    allergies: ["nuts"],
+    restrictions: ["spicy", "alcohol"],
     hatedIngredients: [],
     favoriteIngredients: ["pasta", "chicken", "cheese"],
-    goals: ["healthy"]
-  }
+    goals: ["healthy"],
+  },
 };
 
 export default function ProfileSetup() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  
+
   const [allergies, setAllergies] = useState<string[]>([]);
   const [restrictions, setRestrictions] = useState<string[]>([]);
   const [hatedIngredients, setHatedIngredients] = useState<string[]>([]);
@@ -82,13 +67,18 @@ export default function ProfileSetup() {
 
   const toggleItem = (item: string, list: string[], setList: (list: string[]) => void) => {
     if (list.includes(item)) {
-      setList(list.filter(i => i !== item));
+      setList(list.filter((i) => i !== item));
     } else {
       setList([...list, item]);
     }
   };
 
-  const addIngredient = (value: string, list: string[], setList: (list: string[]) => void, setValue: (val: string) => void) => {
+  const addIngredient = (
+    value: string,
+    list: string[],
+    setList: (list: string[]) => void,
+    setValue: (val: string) => void,
+  ) => {
     if (value.trim() && !list.includes(value.trim())) {
       setList([...list, value.trim()]);
       setValue("");
@@ -96,7 +86,7 @@ export default function ProfileSetup() {
   };
 
   const removeIngredient = (ingredient: string, list: string[], setList: (list: string[]) => void) => {
-    setList(list.filter(i => i !== ingredient));
+    setList(list.filter((i) => i !== ingredient));
   };
 
   const handleSave = () => {
@@ -107,16 +97,16 @@ export default function ProfileSetup() {
       hatedIngredients,
       favoriteIngredients,
       goals,
-      savedAt: new Date().toISOString()
+      savedAt: new Date().toISOString(),
     };
-    
+
     localStorage.setItem("foodEnoughProfile", JSON.stringify(profile));
-    
+
     toast({
       title: "Profile saved!",
       description: "We'll remember your preferences next time you scan a menu.",
     });
-    
+
     // Navigate to menu upload after a short delay
     setTimeout(() => {
       navigate("/menu");
@@ -130,7 +120,7 @@ export default function ProfileSetup() {
     setHatedIngredients(preset.hatedIngredients);
     setFavoriteIngredients(preset.favoriteIngredients);
     setGoals(preset.goals);
-    
+
     // Auto-save preset profile to session
     const profile = {
       name: preset.name,
@@ -139,26 +129,29 @@ export default function ProfileSetup() {
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
-      savedAt: new Date().toISOString()
+      savedAt: new Date().toISOString(),
     };
-    
+
     localStorage.setItem("foodEnoughProfile", JSON.stringify(profile));
     sessionStorage.setItem("currentProfileName", preset.name);
-    
+
     toast({
       title: `${preset.name}'s profile loaded & saved!`,
       description: "Ready to scan a menu with these preferences.",
     });
   };
 
-  const hasAnyData = allergies.length > 0 || restrictions.length > 0 || 
-                      hatedIngredients.length > 0 || favoriteIngredients.length > 0 || 
-                      goals.length > 0;
+  const hasAnyData =
+    allergies.length > 0 ||
+    restrictions.length > 0 ||
+    hatedIngredients.length > 0 ||
+    favoriteIngredients.length > 0 ||
+    goals.length > 0;
 
   return (
     <div className="min-h-screen">
       <Navigation />
-      
+
       <div className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="mb-8">
@@ -166,7 +159,7 @@ export default function ProfileSetup() {
             <p className="text-lg text-muted-foreground">
               Tell us about your preferences so we can recommend the perfect dishes for you.
             </p>
-            
+
             {/* Quick Profile Presets */}
             <Card className="mt-6 bg-gradient-card border-primary/20">
               <CardHeader>
@@ -175,29 +168,23 @@ export default function ProfileSetup() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => loadPreset("julia")}
-                    className="flex-1 min-w-[140px]"
-                  >
+                  <Button variant="outline" onClick={() => loadPreset("julia")} className="flex-1 min-w-[140px]">
                     Julia
-                    <Badge variant="secondary" className="ml-2">No Spicy/Alcohol</Badge>
+                    <Badge variant="secondary" className="ml-2">
+                      No Spicy/Alcohol
+                    </Badge>
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => loadPreset("alex")}
-                    className="flex-1 min-w-[140px]"
-                  >
+                  <Button variant="outline" onClick={() => loadPreset("alex")} className="flex-1 min-w-[140px]">
                     Alex
-                    <Badge variant="secondary" className="ml-2">Loves Spicy</Badge>
+                    <Badge variant="secondary" className="ml-2">
+                      Loves Spicy
+                    </Badge>
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => loadPreset("child")}
-                    className="flex-1 min-w-[140px]"
-                  >
+                  <Button variant="outline" onClick={() => loadPreset("child")} className="flex-1 min-w-[140px]">
                     Child
-                    <Badge variant="secondary" className="ml-2">Kid-Friendly</Badge>
+                    <Badge variant="secondary" className="ml-2">
+                      Kid-Friendly
+                    </Badge>
                   </Button>
                 </div>
               </CardContent>
@@ -209,15 +196,13 @@ export default function ProfileSetup() {
             <Card className="shadow-soft">
               <CardHeader>
                 <CardTitle>Allergies & Restrictions</CardTitle>
-                <CardDescription>
-                  Select any allergies or dietary restrictions we should watch out for
-                </CardDescription>
+                <CardDescription>Select any allergies or dietary restrictions we should watch out for</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
                   <Label className="text-base mb-3 block">Common Allergies</Label>
                   <div className="flex flex-wrap gap-2">
-                    {COMMON_ALLERGIES.map(allergy => (
+                    {COMMON_ALLERGIES.map((allergy) => (
                       <Badge
                         key={allergy}
                         variant={allergies.includes(allergy) ? "destructive" : "outline"}
@@ -229,11 +214,11 @@ export default function ProfileSetup() {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <Label className="text-base mb-3 block">Other Restrictions</Label>
                   <div className="flex flex-wrap gap-2">
-                    {COMMON_RESTRICTIONS.map(restriction => (
+                    {COMMON_RESTRICTIONS.map((restriction) => (
                       <Badge
                         key={restriction}
                         variant={restrictions.includes(restriction) ? "destructive" : "outline"}
@@ -252,9 +237,7 @@ export default function ProfileSetup() {
             <Card className="shadow-soft">
               <CardHeader>
                 <CardTitle>Hated Ingredients</CardTitle>
-                <CardDescription>
-                  Add ingredients you absolutely can't stand
-                </CardDescription>
+                <CardDescription>Add ingredients you absolutely can't stand</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex gap-2 mb-3">
@@ -263,26 +246,26 @@ export default function ProfileSetup() {
                     value={newHated}
                     onChange={(e) => setNewHated(e.target.value)}
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated);
                       }
                     }}
                   />
-                  <Button 
+                  <Button
                     variant="secondary"
                     onClick={() => addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated)}
                   >
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
-                
+
                 {hatedIngredients.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {hatedIngredients.map(ingredient => (
+                    {hatedIngredients.map((ingredient) => (
                       <Badge key={ingredient} variant="destructive" className="px-3 py-1">
                         {ingredient}
-                        <X 
-                          className="w-3 h-3 ml-2 cursor-pointer" 
+                        <X
+                          className="w-3 h-3 ml-2 cursor-pointer"
                           onClick={() => removeIngredient(ingredient, hatedIngredients, setHatedIngredients)}
                         />
                       </Badge>
@@ -296,9 +279,7 @@ export default function ProfileSetup() {
             <Card className="shadow-soft">
               <CardHeader>
                 <CardTitle>Favorite Ingredients</CardTitle>
-                <CardDescription>
-                  What ingredients do you love to see in your meals?
-                </CardDescription>
+                <CardDescription>What ingredients do you love to see in your meals?</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex gap-2 mb-3">
@@ -307,26 +288,28 @@ export default function ProfileSetup() {
                     value={newFavorite}
                     onChange={(e) => setNewFavorite(e.target.value)}
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         addIngredient(newFavorite, favoriteIngredients, setFavoriteIngredients, setNewFavorite);
                       }
                     }}
                   />
-                  <Button 
+                  <Button
                     variant="secondary"
-                    onClick={() => addIngredient(newFavorite, favoriteIngredients, setFavoriteIngredients, setNewFavorite)}
+                    onClick={() =>
+                      addIngredient(newFavorite, favoriteIngredients, setFavoriteIngredients, setNewFavorite)
+                    }
                   >
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
-                
+
                 {favoriteIngredients.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {favoriteIngredients.map(ingredient => (
+                    {favoriteIngredients.map((ingredient) => (
                       <Badge key={ingredient} className="px-3 py-1 bg-primary">
                         {ingredient}
-                        <X 
-                          className="w-3 h-3 ml-2 cursor-pointer" 
+                        <X
+                          className="w-3 h-3 ml-2 cursor-pointer"
                           onClick={() => removeIngredient(ingredient, favoriteIngredients, setFavoriteIngredients)}
                         />
                       </Badge>
@@ -340,13 +323,11 @@ export default function ProfileSetup() {
             <Card className="shadow-soft">
               <CardHeader>
                 <CardTitle>Dietary Goals</CardTitle>
-                <CardDescription>
-                  Select any goals that matter to you
-                </CardDescription>
+                <CardDescription>Select any goals that matter to you</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {DIETARY_GOALS.map(goal => (
+                  {DIETARY_GOALS.map((goal) => (
                     <div key={goal.id} className="flex items-center space-x-2">
                       <Checkbox
                         id={goal.id}
@@ -400,7 +381,7 @@ export default function ProfileSetup() {
                     <div>
                       <span className="font-medium text-foreground">Goals: </span>
                       <span className="text-muted-foreground">
-                        {goals.map(g => DIETARY_GOALS.find(dg => dg.id === g)?.label).join(", ")}
+                        {goals.map((g) => DIETARY_GOALS.find((dg) => dg.id === g)?.label).join(", ")}
                       </span>
                     </div>
                   )}
@@ -413,12 +394,7 @@ export default function ProfileSetup() {
 
             {/* Save Button */}
             <div className="flex justify-center pt-4">
-              <Button 
-                variant="hero" 
-                size="lg"
-                onClick={handleSave}
-                disabled={!hasAnyData}
-              >
+              <Button variant="hero" size="lg" onClick={handleSave} disabled={!hasAnyData}>
                 Save profile & continue
               </Button>
             </div>
