@@ -1,73 +1,35 @@
-# Welcome to your Lovable project
+# Food Enough – AI Waiter & Menu Assistant
+[Live Demo](https://food-enough.lovable.app)
 
-## Project info
+---
 
-**URL**: https://lovable.dev/projects/438e69ea-cac6-4eb3-9208-9780a78633e2
+## 🚀 Overview  
+Food Enough is an AI-powered dining assistant designed to help users with dietary restrictions, allergies, or specific food preferences confidently pick the right dishes when dining out — even when travelling or facing a menu in a foreign language.  
+Users create a food profile (allergies, hated/favourite ingredients, dietary goals), upload or take a photo of a restaurant menu, and receive personalised dish recommendations based on their profile. The system uses OCR, translation, dish-analysis and image generation to deliver smart, inclusive, and healthy dining suggestions.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🎯 Core Features  
+- **User Profile** for food preferences: allergens, disliked / favourite ingredients, lifestyle goals.  
+- **Menu Upload & Analysis**: photo or text input of menu → parsed into structured dish information.  
+- **Recommendation Engine**: filters and ranks menu dishes to produce top-3 matches for the user.  
+- **Dish Visualisation**: generated high-quality dish images to enhance visual appeal.  
+- **Restaurant Mode** (planned): allow restaurants to embed the assistant for guest-facing experiences.
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/438e69ea-cac6-4eb3-9208-9780a78633e2) and start prompting.
+## 🧪 Demo Flow  
+1. Set up a profile: specify allergies, hates, favourites, and goals → `/profile`.  
+2. Upload a menu image or paste text → `/menu`.  
+3. Receive top-3 dish recommendations with reasoning and images.  
+4. (Future) Chat with the “AI Waiter” for follow-up questions or special requests.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/438e69ea-cac6-4eb3-9208-9780a78633e2) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🔧 Tech Stack  
+- **Frontend:** Built with Lovable (React/Next.js) — rapid UI prototyping and flow design.  
+- **Backend:** Deno HTTP server handling API endpoints (menu parsing, dish scoring, image generation).  
+- **AI Services:**  
+  - OCR & translation → Google Gemini 2.5 Flash Lite  
+  - Dish image generation → Gemini 2.5 Flash Image  
+- **Hosting:** Demo version hosted via Lovable → Vercel/Deno-Deploy ready for export.  
