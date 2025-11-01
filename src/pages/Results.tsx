@@ -80,13 +80,19 @@ export default function Results() {
         setRecommendations(initialRecommendations);
         setIsLoading(false);
 
-        // Generate images for dishes without cached images
+        // Generate images for dishes without cached images with timeout
         initialRecommendations.forEach((dish: Dish, index: number) => {
           if (!dish.imageUrl && dish.name && dish.description) {
             (async () => {
               try {
                 console.log(`Generating image for: ${dish.name}`);
-                const { data: imageData, error: imageError } = await supabase.functions.invoke(
+                
+                // Add 30 second timeout to prevent infinite loading
+                const timeoutPromise = new Promise((_, reject) => 
+                  setTimeout(() => reject(new Error('Image generation timeout')), 30000)
+                );
+                
+                const generatePromise = supabase.functions.invoke(
                   'generate-dish-image',
                   {
                     body: {
@@ -95,6 +101,11 @@ export default function Results() {
                     },
                   }
                 );
+
+                const { data: imageData, error: imageError } = await Promise.race([
+                  generatePromise,
+                  timeoutPromise
+                ]) as any;
 
                 if (imageError) {
                   console.error(`Failed to generate image for ${dish.name}:`, imageError);
@@ -106,13 +117,13 @@ export default function Results() {
                   return;
                 }
 
-                console.log(`Image generated for ${dish.name}:`, imageData.cached ? 'cached' : 'new');
+                console.log(`Image generated for ${dish.name}:`, imageData?.cached ? 'cached' : 'new');
                 
                 // Update the specific dish with the generated image
                 setRecommendations((prev) =>
                   prev.map((d, i) =>
                     i === index
-                      ? { ...d, imageUrl: imageData.imageUrl, imageLoading: false }
+                      ? { ...d, imageUrl: imageData?.imageUrl, imageLoading: false }
                       : d
                   )
                 );
