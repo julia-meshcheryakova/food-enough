@@ -124,7 +124,7 @@ export default function Landing() {
                 {[
                   "Instant allergy & restriction checking",
                   "Smart recommendations based on your goals",
-                  "Works with any restaurant menu",
+                  "Works with any language for any restaurant in the world",
                 ].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
