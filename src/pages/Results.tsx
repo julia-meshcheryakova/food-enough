@@ -81,48 +81,50 @@ export default function Results() {
         setIsLoading(false);
 
         // Generate images for dishes without cached images
-        data.recommendations.forEach(async (dish: Dish, index: number) => {
-          if (!dish.imageUrl) {
-            try {
-              console.log(`Generating image for: ${dish.name}`);
-              const { data: imageData, error: imageError } = await supabase.functions.invoke(
-                'generate-dish-image',
-                {
-                  body: {
-                    dishName: dish.name,
-                    dishDescription: dish.description,
-                  },
-                }
-              );
+        initialRecommendations.forEach((dish: Dish, index: number) => {
+          if (!dish.imageUrl && dish.name && dish.description) {
+            (async () => {
+              try {
+                console.log(`Generating image for: ${dish.name}`);
+                const { data: imageData, error: imageError } = await supabase.functions.invoke(
+                  'generate-dish-image',
+                  {
+                    body: {
+                      dishName: dish.name,
+                      dishDescription: dish.description,
+                    },
+                  }
+                );
 
-              if (imageError) {
-                console.error(`Failed to generate image for ${dish.name}:`, imageError);
+                if (imageError) {
+                  console.error(`Failed to generate image for ${dish.name}:`, imageError);
+                  setRecommendations((prev) =>
+                    prev.map((d, i) =>
+                      i === index ? { ...d, imageLoading: false, imageError: true } : d
+                    )
+                  );
+                  return;
+                }
+
+                console.log(`Image generated for ${dish.name}:`, imageData.cached ? 'cached' : 'new');
+                
+                // Update the specific dish with the generated image
+                setRecommendations((prev) =>
+                  prev.map((d, i) =>
+                    i === index
+                      ? { ...d, imageUrl: imageData.imageUrl, imageLoading: false }
+                      : d
+                  )
+                );
+              } catch (error) {
+                console.error(`Error generating image for ${dish.name}:`, error);
                 setRecommendations((prev) =>
                   prev.map((d, i) =>
                     i === index ? { ...d, imageLoading: false, imageError: true } : d
                   )
                 );
-                return;
               }
-
-              console.log(`Image generated for ${dish.name}:`, imageData.cached ? 'cached' : 'new');
-              
-              // Update the specific dish with the generated image
-              setRecommendations((prev) =>
-                prev.map((d, i) =>
-                  i === index
-                    ? { ...d, imageUrl: imageData.imageUrl, imageLoading: false }
-                    : d
-                )
-              );
-            } catch (error) {
-              console.error(`Error generating image for ${dish.name}:`, error);
-              setRecommendations((prev) =>
-                prev.map((d, i) =>
-                  i === index ? { ...d, imageLoading: false, imageError: true } : d
-                )
-              );
-            }
+            })();
           }
         });
       } catch (error) {
