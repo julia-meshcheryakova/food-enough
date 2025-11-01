@@ -230,7 +230,14 @@ export default function Results() {
                 ))}
               </div>
 
-              <div className="text-center">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button 
+                  onClick={() => navigate('/profile')}
+                  variant="secondary"
+                  size="lg"
+                >
+                  Update Profile
+                </Button>
                 <Button 
                   onClick={() => navigate('/menu')}
                   variant="outline"
