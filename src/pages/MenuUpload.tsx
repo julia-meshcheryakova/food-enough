@@ -77,7 +77,7 @@ export default function MenuUpload() {
 
       // Get cache preference from profile
       const profileData = localStorage.getItem("foodEnoughProfile");
-      const useCache = profileData ? (JSON.parse(profileData).useCache ?? true) : true;
+      const useCache = profileData ? JSON.parse(profileData).useCache ?? true : true;
 
       const { data, error } = await supabase.functions.invoke("parse-menu", {
         body: {
@@ -275,9 +275,7 @@ export default function MenuUpload() {
                         {dish.probable_ingredients && dish.probable_ingredients.length > 0 && (
                           <div>
                             <p className="text-sm font-medium text-muted-foreground mb-1">Probable Ingredients:</p>
-                            <p className="text-sm text-muted-foreground italic">
-                              {dish.probable_ingredients.join(", ")}
-                            </p>
+                            <p className="text-sm text-muted-foreground italic">{dish.probable_ingredients.join(", ")}</p>
                           </div>
                         )}
 
@@ -309,6 +307,7 @@ export default function MenuUpload() {
                   </Card>
                 ))}
               </div>
+
             </>
           )}
         </div>
