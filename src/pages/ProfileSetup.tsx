@@ -40,7 +40,7 @@ const PRESET_PROFILES = {
     allergies: [],
     restrictions: [],
     hatedIngredients: ["pork"],
-    favoriteIngredients: ["spicy"],
+    favoriteIngredients: ["spicy", "eggs", "beans"],
     goals: ["healthy"],
   },
   child: {
