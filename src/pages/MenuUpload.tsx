@@ -14,6 +14,7 @@ interface Dish {
   name: string;
   description: string;
   ingredients: string[];
+  probable_ingredients: string[];
   category: string;
   calories: number;
   allergens: string[];
@@ -262,9 +263,16 @@ export default function MenuUpload() {
                     <CardContent>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">Ingredients:</p>
-                          <p className="text-sm text-foreground">{dish.ingredients.join(", ")}</p>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Main Ingredients:</p>
+                          <p className="text-sm text-foreground font-medium">{dish.ingredients.join(", ")}</p>
                         </div>
+
+                        {dish.probable_ingredients && dish.probable_ingredients.length > 0 && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground mb-1">Probable Ingredients:</p>
+                            <p className="text-sm text-muted-foreground italic">{dish.probable_ingredients.join(", ")}</p>
+                          </div>
+                        )}
 
                         {dish.allergens.length > 0 && (
                           <div>

@@ -126,17 +126,23 @@ serve(async (req) => {
             content: `Parse this menu text into a JSON array of dishes. For each dish, extract:
 - name: string (dish name)
 - description: string (brief description)
-- ingredients: array of strings (main ingredients)
+- ingredients: array of strings (RAW ingredients only, e.g., "eggs" not "fried eggs", "chicken" not "grilled chicken")
+- probable_ingredients: array of strings (standard ingredients typically used but not listed, e.g., "oil", "salt", "sugar", "butter")
 - category: string (starter, main, dessert, beverage, side, or other)
 - calories: number (estimate if not provided, typical range 200-800)
 - allergens: array of strings (common allergens: dairy, gluten, nuts, shellfish, eggs, soy)
-- tags: array of strings (spicy, vegetarian, vegan, alcohol, etc.)
+- tags: array of strings (cooking methods like "fried", "grilled", "baked", plus dietary tags like "spicy", "vegetarian", "vegan", "alcohol")
+
+IMPORTANT: 
+- For ingredients, use ONLY raw ingredient names without any descriptors
+- Move all cooking methods and descriptors (fried, grilled, roasted, fresh, etc.) to tags
+- In probable_ingredients, list common cooking staples typically used but not explicitly mentioned
 
 Menu text:
 ${menuText}
 
 Return ONLY a valid JSON array, nothing else. Example format:
-[{"name":"Dish Name","description":"Brief description","ingredients":["ingredient1","ingredient2"],"category":"main","calories":450,"allergens":["gluten","dairy"],"tags":["spicy"]}]`,
+[{"name":"Fried Eggs","description":"Two eggs fried to perfection","ingredients":["eggs"],"probable_ingredients":["oil","salt","pepper"],"category":"main","calories":180,"allergens":["eggs"],"tags":["fried","breakfast"]}]`,
           },
         ],
       }),

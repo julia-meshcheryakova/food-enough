@@ -14,6 +14,7 @@ interface Dish {
   name: string;
   description: string;
   ingredients: string[];
+  probable_ingredients: string[];
   category: string;
   calories: number;
   allergens: string[];
@@ -182,6 +183,26 @@ export default function Results() {
                       <CardDescription>{dish.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
+                      {(dish.ingredients.length > 0 || (dish.probable_ingredients && dish.probable_ingredients.length > 0)) && (
+                        <div className="mb-3">
+                          <h4 className="font-semibold text-xs mb-1">Ingredients:</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {[...dish.ingredients, ...(dish.probable_ingredients || [])].map((ingredient, i) => {
+                              const isFavorite = profileName && JSON.parse(localStorage.getItem('foodEnoughProfile') || '{}').favoriteIngredients?.includes(ingredient);
+                              return (
+                                <Badge 
+                                  key={i} 
+                                  variant={isFavorite ? "default" : "secondary"}
+                                  className={`text-xs ${isFavorite ? 'bg-primary shadow-glow' : ''}`}
+                                >
+                                  {ingredient}
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
                       {dish.allergens.length > 0 && (
                         <div className="mb-3">
                           <h4 className="font-semibold text-xs mb-1">Allergens:</h4>
