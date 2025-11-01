@@ -170,32 +170,25 @@ export default function Results() {
                     </CardHeader>
                     <CardHeader>
                       <div className="flex items-center justify-between mb-2">
-                        <Badge variant="secondary" className="gap-1">
-                          {getCategoryIcon(dish.category)}
-                          {dish.category}
-                        </Badge>
-                        <Badge variant="outline">
-                          {dish.calories} kcal
-                        </Badge>
+                        <div className="flex gap-2">
+                          <Badge variant="secondary" className="gap-1">
+                            {getCategoryIcon(dish.category)}
+                            {dish.category}
+                          </Badge>
+                          <Badge variant="outline">
+                            {dish.calories} kcal
+                          </Badge>
+                        </div>
+                        {dish.score !== undefined && (
+                          <Badge variant="default">
+                            Score: {dish.score}
+                          </Badge>
+                        )}
                       </div>
                       <CardTitle className="text-xl">{dish.name}</CardTitle>
                       <CardDescription>{dish.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {dish.reasoning && dish.reasoning.length > 0 && (
-                        <div className="mb-4">
-                          <h4 className="font-semibold text-sm mb-2">Why we recommend this:</h4>
-                          <ul className="space-y-1">
-                            {dish.reasoning.map((reason, i) => (
-                              <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                                <span className="text-primary">•</span>
-                                <span>{reason}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
                       {dish.allergens.length > 0 && (
                         <div className="mb-3">
                           <h4 className="font-semibold text-xs mb-1">Allergens:</h4>
