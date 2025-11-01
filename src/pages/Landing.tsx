@@ -11,7 +11,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero opacity-5"></div>
@@ -19,8 +19,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-5xl md:text-6xl font-bold text-foreground leading-tight">
-                Your AI Waiter — helping you find the{" "}
-                <span className="text-primary">perfect dish</span>
+                Your AI Waiter — helping you find the <span className="text-primary">perfect dish</span>
               </h1>
               <p className="text-xl text-muted-foreground">
                 Upload a menu or snap a photo. We'll tell you which dishes fit your tastes, diet, and goals.
@@ -38,17 +37,16 @@ export default function Landing() {
                 </Link>
               </div>
               <p className="text-sm text-muted-foreground">
-                For restaurants? <a href="#restaurants" className="text-primary hover:underline">Learn more</a>
+                For restaurants?{" "}
+                <a href="#restaurants" className="text-primary hover:underline">
+                  Learn more
+                </a>
               </p>
             </div>
-            
+
             <div className="relative">
               <div className="rounded-2xl overflow-hidden shadow-hover">
-                <img 
-                  src={appMockup} 
-                  alt="Food Enough app showing menu recommendations" 
-                  className="w-full h-auto"
-                />
+                <img src={appMockup} alt="Food Enough app showing menu recommendations" className="w-full h-auto" />
               </div>
             </div>
           </div>
@@ -59,51 +57,41 @@ export default function Landing() {
       <section className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Three simple steps to your perfect meal
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Let AI do the heavy lifting while you enjoy your food
-            </p>
+            <h2 className="text-4xl font-bold text-foreground mb-4">Three simple steps to your perfect meal</h2>
+            <p className="text-xl text-muted-foreground">Let AI do the heavy lifting while you enjoy your food</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <Card className="bg-gradient-card shadow-soft hover:shadow-hover transition-smooth">
               <CardContent className="pt-6">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <UserCircle className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-foreground">
-                  1. Tell us your food rules 🍅
-                </h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">1. Tell us your food rules 🍅</h3>
                 <p className="text-muted-foreground">
                   Set up your profile with allergies, dislikes, and dietary goals. We'll remember them for next time.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-gradient-card shadow-soft hover:shadow-hover transition-smooth">
               <CardContent className="pt-6">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <Camera className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-foreground">
-                  2. Upload a menu 📷
-                </h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">2. Upload a menu 📷</h3>
                 <p className="text-muted-foreground">
                   Snap a photo of the restaurant menu or paste the text. Our AI reads it instantly.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className="bg-gradient-card shadow-soft hover:shadow-hover transition-smooth">
               <CardContent className="pt-6">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-foreground">
-                  3. Get your best choices ✅
-                </h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">3. Get your best choices ✅</h3>
                 <p className="text-muted-foreground">
                   See the top 3 dishes matched to your preferences, with clear explanations why they're perfect for you.
                 </p>
@@ -118,34 +106,32 @@ export default function Landing() {
         <div className="container mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
-              <img 
-                src={heroMenu} 
-                alt="Delicious restaurant menu spread" 
+              <img
+                src={heroMenu}
+                alt="Delicious restaurant menu spread"
                 className="rounded-2xl shadow-hover w-full h-auto"
               />
             </div>
-            
+
             <div className="order-1 md:order-2 space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
                 <Sparkles className="w-4 h-4 text-primary" />
                 <span className="text-sm font-medium text-primary">Powered by AI</span>
               </div>
-              
-              <h2 className="text-4xl font-bold text-foreground">
-                Never struggle with menu decisions again
-              </h2>
-              
+
+              <h2 className="text-4xl font-bold text-foreground">Never struggle with menu decisions again</h2>
+
               <p className="text-lg text-muted-foreground">
-                Whether you're avoiding allergens, counting calories, or just can't stand cilantro — 
-                Food Enough remembers your preferences and finds dishes you'll actually love.
+                Whether you're avoiding allergens, counting calories, or just can't stand cilantro — Food Enough
+                remembers your preferences and finds dishes you'll actually love.
               </p>
-              
+
               <ul className="space-y-3">
                 {[
                   "Instant allergy & restriction checking",
                   "Smart recommendations based on your goals",
-                  "Chat with AI Waiter for ingredient clarifications",
-                  "Works with any restaurant menu"
+                  //"Chat with AI Waiter for ingredient clarifications",
+                  "Works with any restaurant menu",
                 ].map((feature, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
@@ -153,7 +139,7 @@ export default function Landing() {
                   </li>
                 ))}
               </ul>
-              
+
               <Link to="/profile">
                 <Button variant="hero" size="lg">
                   Get started now
@@ -167,11 +153,10 @@ export default function Landing() {
       {/* CTA Section */}
       <section id="restaurants" className="py-20 px-4 bg-gradient-hero">
         <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold text-primary-foreground mb-4">
-            Restaurant owner?
-          </h2>
+          <h2 className="text-4xl font-bold text-primary-foreground mb-4">Restaurant owner?</h2>
           <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-            Embed Food Enough on your website or tablets to help customers choose confidently and reduce allergy concerns.
+            Embed Food Enough on your website or tablets to help customers choose confidently and reduce allergy
+            concerns.
           </p>
           <Button variant="secondary" size="lg">
             Learn about our restaurant solution
