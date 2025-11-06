@@ -91,7 +91,7 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 px-4">
+      <section className="py-16 px-4">
         <div className="container mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
             <div className="order-2 md:order-1">
