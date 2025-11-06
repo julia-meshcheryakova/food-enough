@@ -38,6 +38,7 @@ export default function MenuUpload() {
   useEffect(() => {
     const savedPreviews = sessionStorage.getItem("menuImagePreviews");
     const savedText = sessionStorage.getItem("menuText");
+    const savedParsedMenu = sessionStorage.getItem("parsedMenu");
     
     if (savedPreviews) {
       try {
@@ -50,6 +51,15 @@ export default function MenuUpload() {
     
     if (savedText) {
       setMenuText(savedText);
+    }
+
+    if (savedParsedMenu) {
+      try {
+        const parsed = JSON.parse(savedParsedMenu);
+        setDishes(parsed);
+      } catch (error) {
+        console.error("Failed to load saved parsed menu:", error);
+      }
     }
   }, []);
 
@@ -218,7 +228,8 @@ export default function MenuUpload() {
       if (allDishes.length > 0) {
         setDishes(allDishes);
 
-        // Store parsed menu in localStorage for Results page
+        // Store parsed menu in sessionStorage and localStorage
+        sessionStorage.setItem("parsedMenu", JSON.stringify(allDishes));
         localStorage.setItem("parsedMenu", JSON.stringify(allDishes));
 
         toast({
@@ -433,7 +444,7 @@ export default function MenuUpload() {
               <div className="mb-6 flex justify-between items-center">
                 <h2 className="text-2xl font-bold text-foreground">Found {dishes.length} dishes</h2>
                 <Button onClick={() => navigate("/results")} size="default">
-                  Next: See Recommendations →
+                  See recommendations →
                 </Button>
               </div>
 
