@@ -35,7 +35,7 @@ export default function Landing() {
       </section>
 
       {/* How it Works Section */}
-      <section className="py-24 px-4 bg-muted/30">
+      <section className="py-16 px-4 bg-muted/30 mt-0">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
