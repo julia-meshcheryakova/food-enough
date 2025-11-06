@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Camera, FileText, Upload, Loader2, ChefHat, Flame, Wine, Leaf, Trash2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -225,6 +226,9 @@ export default function MenuUpload() {
           title: "Menu analyzed!",
           description: `Found ${allDishes.length} dishes`,
         });
+
+        // Navigate directly to results page
+        navigate("/results");
       } else {
         toast({
           title: "No dishes found",
@@ -422,83 +426,88 @@ export default function MenuUpload() {
                   ) : (
                     <>
                       <ChefHat className="w-4 h-4 mr-2" />
-                      Analyze Menu
+                      Get Recommendations
                     </>
                   )}
                 </Button>
               </div>
-            </>
-          ) : (
-            <>
-              <div className="mb-6 flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-foreground">Found {dishes.length} dishes</h2>
-                <Button onClick={() => navigate("/results")} size="default">
-                  Next: See Recommendations →
-                </Button>
-              </div>
 
-              <div className="grid gap-4 mb-8">
-                {dishes.map((dish, index) => (
-                  <Card key={index} className="shadow-soft hover:shadow-hover transition-smooth">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-2xl">{getCategoryIcon(dish.category)}</span>
-                            <CardTitle className="text-xl">{dish.name}</CardTitle>
-                          </div>
-                          <CardDescription className="text-base">{dish.description}</CardDescription>
-                        </div>
-                        <Badge variant="secondary" className="ml-4">
-                          {dish.calories} cal
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">Main Ingredients:</p>
-                          <p className="text-sm text-foreground font-medium">{dish.ingredients.join(", ")}</p>
-                        </div>
+              {dishes.length > 0 && (
+                <Card className="mt-8 shadow-soft">
+                  <CardContent className="pt-6">
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="menu-details">
+                        <AccordionTrigger className="text-lg font-semibold">
+                          Menu Parse Details ({dishes.length} dishes)
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="grid gap-4 pt-2">
+                            {dishes.map((dish, index) => (
+                              <Card key={index} className="shadow-soft">
+                                <CardHeader>
+                                  <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-2xl">{getCategoryIcon(dish.category)}</span>
+                                        <CardTitle className="text-xl">{dish.name}</CardTitle>
+                                      </div>
+                                      <CardDescription className="text-base">{dish.description}</CardDescription>
+                                    </div>
+                                    <Badge variant="secondary" className="ml-4">
+                                      {dish.calories} cal
+                                    </Badge>
+                                  </div>
+                                </CardHeader>
+                                <CardContent>
+                                  <div className="space-y-3">
+                                    <div>
+                                      <p className="text-sm font-medium text-muted-foreground mb-1">Main Ingredients:</p>
+                                      <p className="text-sm text-foreground font-medium">{dish.ingredients.join(", ")}</p>
+                                    </div>
 
-                        {dish.probable_ingredients && dish.probable_ingredients.length > 0 && (
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground mb-1">Probable Ingredients:</p>
-                            <p className="text-sm text-muted-foreground italic">{dish.probable_ingredients.join(", ")}</p>
-                          </div>
-                        )}
+                                    {dish.probable_ingredients && dish.probable_ingredients.length > 0 && (
+                                      <div>
+                                        <p className="text-sm font-medium text-muted-foreground mb-1">Probable Ingredients:</p>
+                                        <p className="text-sm text-muted-foreground italic">{dish.probable_ingredients.join(", ")}</p>
+                                      </div>
+                                    )}
 
-                        {dish.allergens.length > 0 && (
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground mb-1">Allergens:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {dish.allergens.map((allergen, i) => (
-                                <Badge key={i} variant="destructive" className="text-xs">
-                                  {allergen}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+                                    {dish.allergens.length > 0 && (
+                                      <div>
+                                        <p className="text-sm font-medium text-muted-foreground mb-1">Allergens:</p>
+                                        <div className="flex flex-wrap gap-2">
+                                          {dish.allergens.map((allergen, i) => (
+                                            <Badge key={i} variant="destructive" className="text-xs">
+                                              {allergen}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
 
-                        {dish.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 pt-2">
-                            {dish.tags.map((tag, i) => (
-                              <Badge key={i} variant="outline" className="text-xs gap-1">
-                                {getTagIcon(tag)}
-                                {tag}
-                              </Badge>
+                                    {dish.tags.length > 0 && (
+                                      <div className="flex flex-wrap gap-2 pt-2">
+                                        {dish.tags.map((tag, i) => (
+                                          <Badge key={i} variant="outline" className="text-xs gap-1">
+                                            {getTagIcon(tag)}
+                                            {tag}
+                                          </Badge>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </CardContent>
+                              </Card>
                             ))}
                           </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </CardContent>
+                </Card>
+              )}
             </>
-          )}
+          ) : null}
         </div>
       </div>
 
