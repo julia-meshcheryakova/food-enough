@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { filterConflictingIngredients } from "@/lib/ingredientMapping";
 
 const COMMON_RESTRICTIONS = [
   "gluten",
@@ -57,11 +58,11 @@ const GOAL_TO_INGREDIENTS: Record<string, { favorites: string[]; restrictions: s
   },
   vegetarian: {
     favorites: ["lentils", "chickpeas", "tofu", "quinoa", "vegetables"],
-    restrictions: ["pork", "beef", "fish", "shellfish"],
+    restrictions: ["meat", "poultry", "fish", "shellfish", "seafood"],
   },
   vegan: {
     favorites: ["tofu", "tempeh", "beans", "nuts", "seeds", "nutritional yeast"],
-    restrictions: ["pork", "beef", "fish", "shellfish", "eggs", "dairy"],
+    restrictions: ["meat", "poultry", "fish", "shellfish", "seafood", "eggs", "dairy", "animal products"],
   },
   "low-carb": {
     favorites: ["cauliflower", "zucchini", "leafy greens", "eggs", "cheese", "meat"],
@@ -101,7 +102,7 @@ const PRESET_PROFILES = {
   vegetarian: {
     name: "Vegetarian",
     allergies: [],
-    restrictions: ["pork", "beef", "fish"],
+    restrictions: ["meat", "poultry", "fish", "seafood"],
     hatedIngredients: [],
     favoriteIngredients: ["tofu", "lentils", "spinach", "mushrooms"],
     goals: ["vegetarian", "healthy"],
@@ -109,7 +110,7 @@ const PRESET_PROFILES = {
   vegan: {
     name: "Vegan",
     allergies: [],
-    restrictions: ["pork", "beef", "fish", "eggs", "dairy"],
+    restrictions: ["meat", "poultry", "fish", "seafood", "eggs", "dairy"],
     hatedIngredients: [],
     favoriteIngredients: ["tofu", "beans", "quinoa", "avocado"],
     goals: ["vegan", "healthy"],
@@ -177,16 +178,33 @@ export default function ProfileSetup() {
       // Auto-populate ingredients based on goal
       const goalMapping = GOAL_TO_INGREDIENTS[goalId];
       if (goalMapping) {
-        // Add favorite ingredients (avoid duplicates)
-        const newFavorites = goalMapping.favorites.filter((fav) => !favoriteIngredients.includes(fav));
-        if (newFavorites.length > 0) {
-          setFavoriteIngredients([...favoriteIngredients, ...newFavorites]);
-        }
-
         // Add restrictions (avoid duplicates)
         const newRestrictions = goalMapping.restrictions.filter((res) => !restrictions.includes(res));
-        if (newRestrictions.length > 0) {
-          setRestrictions([...restrictions, ...newRestrictions]);
+        const updatedRestrictions = [...restrictions, ...newRestrictions];
+        
+        // Remove favorite ingredients that conflict with new restrictions
+        const filteredFavorites = filterConflictingIngredients(
+          favoriteIngredients, 
+          updatedRestrictions
+        );
+        
+        // Add new favorite ingredients (avoid duplicates and conflicts)
+        const newFavorites = goalMapping.favorites
+          .filter((fav) => !filteredFavorites.includes(fav))
+          .filter((fav) => filterConflictingIngredients([fav], updatedRestrictions).length > 0);
+        
+        setFavoriteIngredients([...filteredFavorites, ...newFavorites]);
+        setRestrictions(updatedRestrictions);
+        
+        // Show toast if any favorites were removed
+        const removedFavorites = favoriteIngredients.filter(
+          (fav) => !filteredFavorites.includes(fav)
+        );
+        if (removedFavorites.length > 0) {
+          toast({
+            title: "Favorites updated",
+            description: `Removed conflicting ingredients: ${removedFavorites.join(", ")}`,
+          });
         }
       }
     }
