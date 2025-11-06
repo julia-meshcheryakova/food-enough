@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Upload, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -88,6 +88,7 @@ export default function ProfileSetup() {
   const [goals, setGoals] = useState<string[]>([]);
   const [newHated, setNewHated] = useState("");
   const [newFavorite, setNewFavorite] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState<string>("");
 
   // Load existing profile from localStorage on mount, or default to balancedAdult
   useEffect(() => {
@@ -100,6 +101,7 @@ export default function ProfileSetup() {
         setHatedIngredients(profile.hatedIngredients || []);
         setFavoriteIngredients(profile.favoriteIngredients || []);
         setGoals(profile.goals || []);
+        setProfilePhoto(profile.profilePhoto || "");
       } catch (error) {
         console.error("Failed to load saved profile:", error);
       }
@@ -138,6 +140,26 @@ export default function ProfileSetup() {
     setList(list.filter((i) => i !== ingredient));
   };
 
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload an image smaller than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = () => {
     const profile = {
       name: sessionStorage.getItem("currentProfileName") || "Custom",
@@ -146,6 +168,7 @@ export default function ProfileSetup() {
       hatedIngredients,
       favoriteIngredients,
       goals,
+      profilePhoto,
       savedAt: new Date().toISOString(),
     };
 
@@ -178,6 +201,7 @@ export default function ProfileSetup() {
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
+      profilePhoto,
       savedAt: new Date().toISOString(),
     };
 
@@ -209,7 +233,62 @@ export default function ProfileSetup() {
               Tell us about your preferences so we can recommend the perfect dishes for you. We'll remember this next
               time you scan a menu.
             </p>
+          </div>
 
+          {/* Summary Card - Moved to Top */}
+          {hasAnyData && (
+            <Card className="bg-gradient-card shadow-soft border-2 border-primary/20 mb-6">
+              <CardHeader>
+                <CardTitle className="text-primary">Your Current Profile</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {profilePhoto && (
+                  <div className="flex items-center gap-3 pb-3 border-b border-border">
+                    <img
+                      src={profilePhoto}
+                      alt="Profile"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-primary/30"
+                    />
+                    <span className="text-sm text-muted-foreground">Profile photo saved</span>
+                  </div>
+                )}
+                {allergies.length > 0 && (
+                  <div>
+                    <span className="font-medium text-foreground">Allergies: </span>
+                    <span className="text-muted-foreground">{allergies.join(", ")}</span>
+                  </div>
+                )}
+                {restrictions.length > 0 && (
+                  <div>
+                    <span className="font-medium text-foreground">Restrictions: </span>
+                    <span className="text-muted-foreground">{restrictions.join(", ")}</span>
+                  </div>
+                )}
+                {hatedIngredients.length > 0 && (
+                  <div>
+                    <span className="font-medium text-foreground">Hated: </span>
+                    <span className="text-muted-foreground">{hatedIngredients.join(", ")}</span>
+                  </div>
+                )}
+                {favoriteIngredients.length > 0 && (
+                  <div>
+                    <span className="font-medium text-foreground">Favorites: </span>
+                    <span className="text-muted-foreground">{favoriteIngredients.join(", ")}</span>
+                  </div>
+                )}
+                {goals.length > 0 && (
+                  <div>
+                    <span className="font-medium text-foreground">Goals: </span>
+                    <span className="text-muted-foreground">
+                      {goals.map((g) => DIETARY_GOALS.find((dg) => dg.id === g)?.label).join(", ")}
+                    </span>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="space-y-6">
             {/* Quick Profile Presets */}
             <Card className="mt-6 bg-primary/5 border-2 border-primary/30 shadow-lg">
               <CardHeader>
@@ -302,6 +381,55 @@ export default function ProfileSetup() {
                         {restriction}
                       </Badge>
                     ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Profile Photo */}
+            <Card className="shadow-soft">
+              <CardHeader>
+                <CardTitle>Profile Photo</CardTitle>
+                <CardDescription>Upload a photo to personalize your profile (optional)</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4">
+                  {profilePhoto ? (
+                    <div className="relative">
+                      <img
+                        src={profilePhoto}
+                        alt="Profile"
+                        className="w-24 h-24 rounded-full object-cover border-2 border-primary/30"
+                      />
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                        onClick={() => setProfilePhoto("")}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30">
+                      <User className="w-10 h-10 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <Label htmlFor="photo-upload" className="cursor-pointer">
+                      <div className="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors inline-flex">
+                        <Upload className="w-4 h-4" />
+                        <span>{profilePhoto ? "Change Photo" : "Upload Photo"}</span>
+                      </div>
+                    </Label>
+                    <Input
+                      id="photo-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handlePhotoUpload}
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">Max 5MB • JPG, PNG, or WebP</p>
                   </div>
                 </div>
               </CardContent>
@@ -419,49 +547,6 @@ export default function ProfileSetup() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Summary Card */}
-            {hasAnyData && (
-              <Card className="bg-gradient-card shadow-soft border-2 border-primary/20">
-                <CardHeader>
-                  <CardTitle className="text-primary">Your Current Profile</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {allergies.length > 0 && (
-                    <div>
-                      <span className="font-medium text-foreground">Allergies: </span>
-                      <span className="text-muted-foreground">{allergies.join(", ")}</span>
-                    </div>
-                  )}
-                  {restrictions.length > 0 && (
-                    <div>
-                      <span className="font-medium text-foreground">Restrictions: </span>
-                      <span className="text-muted-foreground">{restrictions.join(", ")}</span>
-                    </div>
-                  )}
-                  {hatedIngredients.length > 0 && (
-                    <div>
-                      <span className="font-medium text-foreground">Hated: </span>
-                      <span className="text-muted-foreground">{hatedIngredients.join(", ")}</span>
-                    </div>
-                  )}
-                  {favoriteIngredients.length > 0 && (
-                    <div>
-                      <span className="font-medium text-foreground">Favorites: </span>
-                      <span className="text-muted-foreground">{favoriteIngredients.join(", ")}</span>
-                    </div>
-                  )}
-                  {goals.length > 0 && (
-                    <div>
-                      <span className="font-medium text-foreground">Goals: </span>
-                      <span className="text-muted-foreground">
-                        {goals.map((g) => DIETARY_GOALS.find((dg) => dg.id === g)?.label).join(", ")}
-                      </span>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
 
             {/* Save Button */}
             <div className="flex justify-center pt-4">
