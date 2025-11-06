@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
-export const Footer = () => {
+export const Footer = ({ className }: { className?: string }) => {
   return (
-    <footer className="bg-muted mt-0 border-t border-border">
+    <footer className={cn("bg-muted mt-0 border-t border-border", className)}>
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
