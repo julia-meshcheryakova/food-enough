@@ -380,15 +380,14 @@ export default function ProfileSetup() {
                 >
                   Sensitive Eater
                 </Badge>
-                <Button
+                <Badge
                   variant="outline"
-                  size="sm"
+                  className="cursor-pointer px-4 py-2 border-green-500 hover:bg-primary/10 transition-colors"
                   onClick={clearProfile}
                   disabled={!hasAnyData}
-                  className="px-4 py-2 border-2 border-green-500 hover:bg-primary/10 transition-colors"
                 >
-                  Clear All
-                </Button>
+                  Clear
+                </Badge>
               </div>
             </CardContent>
           </Card>
