@@ -13,7 +13,7 @@ export default function Landing() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-16 md:pt-24 pb-12 md:pb-16 px-4 overflow-hidden">
+      <section className="relative pt-28 md:pt-24 pb-12 md:pb-16 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero opacity-5 pointer-events-none"></div>
         <div className="container mx-auto max-w-3xl text-center">
           <div className="space-y-4 md:space-y-6">
