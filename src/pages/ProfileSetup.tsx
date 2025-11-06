@@ -89,7 +89,7 @@ export default function ProfileSetup() {
   const [newHated, setNewHated] = useState("");
   const [newFavorite, setNewFavorite] = useState("");
 
-  // Load existing profile from localStorage on mount
+  // Load existing profile from localStorage on mount, or default to balancedAdult
   useEffect(() => {
     const savedProfile = localStorage.getItem("foodEnoughProfile");
     if (savedProfile) {
@@ -103,6 +103,14 @@ export default function ProfileSetup() {
       } catch (error) {
         console.error("Failed to load saved profile:", error);
       }
+    } else {
+      // No saved profile, load balancedAdult as default
+      const preset = PRESET_PROFILES.balancedAdult;
+      setAllergies(preset.allergies);
+      setRestrictions(preset.restrictions);
+      setHatedIngredients(preset.hatedIngredients);
+      setFavoriteIngredients(preset.favoriteIngredients);
+      setGoals(preset.goals);
     }
   }, []);
 
@@ -209,16 +217,22 @@ export default function ProfileSetup() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-3">
-                  <Button variant="outline" onClick={() => loadPreset("julia")} className="flex-1 min-w-[140px]">
-                    Julia
+                  <Button variant="outline" onClick={() => loadPreset("vegetarian")} className="flex-1 min-w-[140px]">
+                    Vegetarian
                     <Badge variant="secondary" className="ml-2">
-                      No Spicy/Alcohol
+                      Plant-Based
                     </Badge>
                   </Button>
-                  <Button variant="outline" onClick={() => loadPreset("alex")} className="flex-1 min-w-[140px]">
-                    Alex
+                  <Button variant="outline" onClick={() => loadPreset("vegan")} className="flex-1 min-w-[140px]">
+                    Vegan
                     <Badge variant="secondary" className="ml-2">
-                      Loves Spicy
+                      No Animal Products
+                    </Badge>
+                  </Button>
+                  <Button variant="outline" onClick={() => loadPreset("fitnessEnthusiast")} className="flex-1 min-w-[140px]">
+                    Fitness
+                    <Badge variant="secondary" className="ml-2">
+                      High-Protein
                     </Badge>
                   </Button>
                   <Button variant="outline" onClick={() => loadPreset("child")} className="flex-1 min-w-[140px]">
