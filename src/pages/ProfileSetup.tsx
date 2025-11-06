@@ -11,6 +11,7 @@ import { X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { filterConflictingIngredients } from "@/lib/ingredientMapping";
+import { getPreviousPage, clearPreviousPage, setPreviousPage, isFirstTimeUser } from "@/lib/sessionState";
 
 const COMMON_RESTRICTIONS = [
   "gluten",
@@ -274,9 +275,18 @@ export default function ProfileSetup() {
       description: "We'll remember your preferences next time you scan a menu.",
     });
 
-    // Navigate to menu upload after a short delay
+    // Check if we have a previous page to return to
+    const previousPage = getPreviousPage();
+    
     setTimeout(() => {
-      navigate("/menu");
+      if (previousPage) {
+        // Return to previous page
+        clearPreviousPage();
+        navigate(previousPage);
+      } else {
+        // Default navigation to menu page
+        navigate("/menu");
+      }
     }, 1500);
   };
 

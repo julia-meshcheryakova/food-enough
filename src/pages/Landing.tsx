@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
@@ -6,8 +6,22 @@ import { Footer } from "@/components/Footer";
 import { Camera, CheckCircle, UserCircle, Sparkles } from "lucide-react";
 import heroMenu from "@/assets/hero-menu.jpg";
 import appMockup from "@/assets/app-mockup.png";
+import { isFirstTimeUser, setFirstTimeUser } from "@/lib/sessionState";
 
 export default function Landing() {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    const isFirstTime = isFirstTimeUser();
+    if (isFirstTime) {
+      setFirstTimeUser(true);
+      navigate("/profile");
+    } else {
+      setFirstTimeUser(false);
+      navigate("/menu");
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navigation />
@@ -24,11 +38,9 @@ export default function Landing() {
               Upload any menu or snap a photo. Get instant recommendations based on your taste, diet, and allergies.
             </p>
             <div>
-              <Link to="/profile">
-                <Button variant="hero" size="lg" className="shadow-hover">
-                  Try It Now
-                </Button>
-              </Link>
+              <Button variant="hero" size="lg" className="shadow-hover" onClick={handleGetStarted}>
+                Try It Now
+              </Button>
             </div>
           </div>
         </div>
@@ -136,11 +148,9 @@ export default function Landing() {
               </ul>
 
               <div className="pt-4">
-                <Link to="/profile">
-                  <Button variant="hero" size="lg" className="shadow-hover">
-                    Get started now
-                  </Button>
-                </Link>
+                <Button variant="hero" size="lg" className="shadow-hover" onClick={handleGetStarted}>
+                  Get started now
+                </Button>
               </div>
             </div>
           </div>
