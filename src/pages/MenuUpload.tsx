@@ -29,28 +29,61 @@ export default function MenuUpload() {
   const [menuText, setMenuText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [dishes, setDishes] = useState<Dish[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
+  const processImageFile = (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setImagePreview(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (!file.type.startsWith("image/")) {
-        toast({
-          title: "Invalid file",
-          description: "Please upload an image file",
-          variant: "destructive",
-        });
-        return;
-      }
+      processImageFile(file);
+    }
+  };
 
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImagePreview(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processImageFile(file);
     }
   };
 
@@ -160,9 +193,9 @@ export default function MenuUpload() {
           {!dishes.length ? (
             <>
               <Card className="shadow-soft hover:shadow-hover transition-smooth">
-                <CardContent className="pt-6">
+                <CardContent className="pt-8 pb-8">
                   <Tabs defaultValue="photo" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsList className="grid w-full grid-cols-2 mb-8">
                       <TabsTrigger value="photo">
                         <Camera className="w-4 h-4 mr-2" />
                         Photo
@@ -173,7 +206,23 @@ export default function MenuUpload() {
                       </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="photo" className="space-y-3">
+                    <TabsContent value="photo" className="space-y-4">
+                      <div
+                        onDragEnter={handleDragEnter}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                          isDragging ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+                        }`}
+                      >
+                        <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Drag and drop an image here
+                        </p>
+                        <p className="text-xs text-muted-foreground">or use the buttons below</p>
+                      </div>
+                      
                       <input
                         ref={cameraInputRef}
                         type="file"
@@ -189,32 +238,35 @@ export default function MenuUpload() {
                         className="hidden"
                         onChange={handleImageUpload}
                       />
-                      <Button 
-                        onClick={() => cameraInputRef.current?.click()} 
-                        variant="default" 
-                        className="w-full"
-                        size="lg"
-                      >
-                        <Camera className="w-4 h-4 mr-2" />
-                        Use Camera
-                      </Button>
-                      <Button 
-                        onClick={() => fileInputRef.current?.click()} 
-                        variant="outline" 
-                        className="w-full"
-                        size="lg"
-                      >
-                        <Upload className="w-4 h-4 mr-2" />
-                        Upload from Device
-                      </Button>
+                      
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button 
+                          onClick={() => cameraInputRef.current?.click()} 
+                          variant="default" 
+                          className="w-full"
+                          size="lg"
+                        >
+                          <Camera className="w-4 h-4 mr-2" />
+                          Camera
+                        </Button>
+                        <Button 
+                          onClick={() => fileInputRef.current?.click()} 
+                          variant="outline" 
+                          className="w-full"
+                          size="lg"
+                        >
+                          <Upload className="w-4 h-4 mr-2" />
+                          Upload
+                        </Button>
+                      </div>
                     </TabsContent>
 
-                    <TabsContent value="text">
+                    <TabsContent value="text" className="mt-0">
                       <Textarea
                         placeholder="Paste menu text here..."
                         value={menuText}
                         onChange={(e) => setMenuText(e.target.value)}
-                        className="min-h-[200px]"
+                        className="min-h-[240px]"
                       />
                     </TabsContent>
                   </Tabs>
@@ -222,7 +274,7 @@ export default function MenuUpload() {
               </Card>
 
               {imagePreview && (
-                <Card className="mb-6 shadow-soft">
+                <Card className="my-8 shadow-soft">
                   <CardHeader>
                     <CardTitle className="text-lg">Image Preview</CardTitle>
                   </CardHeader>
@@ -236,7 +288,7 @@ export default function MenuUpload() {
                 </Card>
               )}
 
-              <div className="text-center">
+              <div className="text-center mt-8">
                 <Button
                   onClick={analyzeMenu}
                   disabled={isAnalyzing || (!imageFile && !menuText.trim())}
