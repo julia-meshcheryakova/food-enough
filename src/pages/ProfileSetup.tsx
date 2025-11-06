@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, Upload, User } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -88,7 +88,6 @@ export default function ProfileSetup() {
   const [goals, setGoals] = useState<string[]>([]);
   const [newHated, setNewHated] = useState("");
   const [newFavorite, setNewFavorite] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState<string>("");
 
   // Load existing profile from localStorage on mount, or default to balancedAdult
   useEffect(() => {
@@ -101,7 +100,6 @@ export default function ProfileSetup() {
         setHatedIngredients(profile.hatedIngredients || []);
         setFavoriteIngredients(profile.favoriteIngredients || []);
         setGoals(profile.goals || []);
-        setProfilePhoto(profile.profilePhoto || "");
       } catch (error) {
         console.error("Failed to load saved profile:", error);
       }
@@ -140,26 +138,6 @@ export default function ProfileSetup() {
     setList(list.filter((i) => i !== ingredient));
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          title: "File too large",
-          description: "Please upload an image smaller than 5MB",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePhoto(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleSave = () => {
     const profile = {
       name: sessionStorage.getItem("currentProfileName") || "Custom",
@@ -168,7 +146,6 @@ export default function ProfileSetup() {
       hatedIngredients,
       favoriteIngredients,
       goals,
-      profilePhoto,
       savedAt: new Date().toISOString(),
     };
 
@@ -201,7 +178,6 @@ export default function ProfileSetup() {
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
-      profilePhoto,
       savedAt: new Date().toISOString(),
     };
 
@@ -241,49 +217,7 @@ export default function ProfileSetup() {
               <CardHeader>
                 <CardTitle className="text-primary">Your Current Profile</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Profile Photo Upload */}
-                <div className="flex items-center gap-4 pb-4 border-b border-border">
-                  {profilePhoto ? (
-                    <div className="relative">
-                      <img
-                        src={profilePhoto}
-                        alt="Profile"
-                        className="w-20 h-20 rounded-full object-cover border-2 border-primary/30"
-                      />
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                        onClick={() => setProfilePhoto("")}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30">
-                      <User className="w-8 h-8 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <Label htmlFor="photo-upload" className="cursor-pointer">
-                      <div className="flex items-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors inline-flex text-sm">
-                        <Upload className="w-4 h-4" />
-                        <span>{profilePhoto ? "Change Photo" : "Upload Photo"}</span>
-                      </div>
-                    </Label>
-                    <Input
-                      id="photo-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handlePhotoUpload}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, or WebP</p>
-                  </div>
-                </div>
-
-                {/* Profile Details */}
+              <CardContent className="space-y-3">
                 {allergies.length > 0 && (
                   <div>
                     <span className="font-medium text-foreground">Allergies: </span>
