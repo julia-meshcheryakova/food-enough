@@ -23,7 +23,7 @@ export default function Landing() {
             <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
               Upload any menu or snap a photo. Get instant recommendations based on your taste, diet, and allergies.
             </p>
-            <div className="pt-2 md:pt-4">
+            <div>
               <Link to="/profile">
                 <Button variant="hero" size="lg" className="shadow-hover">
                   Get Started
