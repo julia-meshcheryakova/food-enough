@@ -206,7 +206,8 @@ export default function ProfileSetup() {
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-3">Set up your food profile</h1>
             <p className="text-lg text-muted-foreground">
-              Tell us about your preferences so we can recommend the perfect dishes for you.
+              Tell us about your preferences so we can recommend the perfect dishes for you. We'll remember this next
+              time you scan a menu.
             </p>
 
             {/* Quick Profile Presets */}
@@ -458,9 +459,6 @@ export default function ProfileSetup() {
                       </span>
                     </div>
                   )}
-                  <p className="text-sm text-muted-foreground italic pt-2">
-                    We'll remember this next time you scan a menu.
-                  </p>
                 </CardContent>
               </Card>
             )}
