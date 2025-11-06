@@ -157,7 +157,7 @@ export default function Landing() {
             concerns.
           </p>
           <Button variant="secondary" size="lg" className="shadow-hover">
-            Learn about our restaurant solution
+            Learn about our restaurant solution [Coming soon...]
           </Button>
         </div>
       </section>
