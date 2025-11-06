@@ -26,7 +26,7 @@ export default function Landing() {
             <div>
               <Link to="/profile">
                 <Button variant="hero" size="lg" className="shadow-hover">
-                  Get Started
+                  Try It Now
                 </Button>
               </Link>
             </div>
