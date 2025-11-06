@@ -218,7 +218,11 @@ export default function ProfileSetup() {
         // Add new favorite ingredients (avoid duplicates and conflicts)
         const newFavorites = goalMapping.favorites
           .filter((fav) => !filteredFavorites.includes(fav))
-          .filter((fav) => filterConflictingIngredients([fav], updatedRestrictions).length > 0);
+          .filter((fav) => {
+            // Only add if ingredient doesn't conflict with restrictions
+            const filtered = filterConflictingIngredients([fav], updatedRestrictions);
+            return filtered.length === 1; // If fav is in the result, it doesn't conflict
+          });
         
         setFavoriteIngredients([...filteredFavorites, ...newFavorites]);
         setRestrictions(updatedRestrictions);

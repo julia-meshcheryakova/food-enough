@@ -1,20 +1,20 @@
 // Internal mapping between ingredient categories and specific ingredients
 export const INGREDIENT_CATEGORIES: Record<string, string[]> = {
   // Meat categories
-  meat: ["chicken", "poultry", "beef", "pork", "lamb", "veal", "duck", "turkey", "goose"],
+  meat: ["chicken", "turkey", "duck", "goose", "beef", "pork", "lamb", "veal", "venison"],
   poultry: ["chicken", "turkey", "duck", "goose", "quail"],
   "red meat": ["beef", "pork", "lamb", "veal", "venison"],
   
   // Seafood categories
-  seafood: ["fish", "shellfish", "shrimp", "crab", "lobster", "salmon", "tuna", "cod", "oysters", "mussels", "clams"],
+  seafood: ["salmon", "tuna", "cod", "halibut", "trout", "shrimp", "crab", "lobster", "oysters", "mussels", "clams", "scallops"],
   fish: ["salmon", "tuna", "cod", "halibut", "trout", "bass", "tilapia", "sardines", "mackerel"],
   shellfish: ["shrimp", "crab", "lobster", "oysters", "mussels", "clams", "scallops"],
   
   // Dairy categories
   dairy: ["milk", "cheese", "yogurt", "butter", "cream", "ice cream", "sour cream", "greek yogurt", "cottage cheese"],
   
-  // Animal products
-  "animal products": ["meat", "poultry", "beef", "pork", "fish", "shellfish", "eggs", "dairy", "milk", "cheese", "yogurt", "butter", "honey"],
+  // Animal products (using specific ingredients only)
+  "animal products": ["chicken", "turkey", "beef", "pork", "lamb", "salmon", "tuna", "shrimp", "crab", "eggs", "milk", "cheese", "yogurt", "butter", "honey"],
   
   // Nuts and seeds
   nuts: ["peanuts", "almonds", "walnuts", "cashews", "pecans", "pistachios", "hazelnuts", "macadamia nuts"],
