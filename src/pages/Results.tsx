@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Utensils, Flame, Star, AlertCircle, Loader2 } from "lucide-react";
-import { setPreviousPage } from "@/lib/sessionState";
 
 interface Dish {
   name: string;
@@ -302,10 +301,7 @@ export default function Results() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
-                  onClick={() => {
-                    setPreviousPage('/results');
-                    navigate('/profile');
-                  }}
+                  onClick={() => navigate('/profile')}
                   variant="secondary"
                   size="lg"
                 >

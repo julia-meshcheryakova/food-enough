@@ -1,20 +1,9 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Utensils, User } from "lucide-react";
-import { setPreviousPage } from "@/lib/sessionState";
 
 export const Navigation = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleProfileClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // Don't set previous page if we're already on profile or landing
-    if (location.pathname !== "/profile" && location.pathname !== "/") {
-      setPreviousPage(location.pathname);
-    }
-    navigate("/profile");
-  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
@@ -26,13 +15,12 @@ export const Navigation = () => {
           </Link>
 
           <div className="flex items-center gap-4">
-            <Button 
-              variant={location.pathname === "/profile" ? "default" : "outline"}
-              onClick={handleProfileClick}
-            >
-              <User className="w-4 h-4" />
-              My Profile
-            </Button>
+            <Link to="/profile">
+              <Button variant={location.pathname === "/profile" ? "default" : "outline"}>
+                <User className="w-4 h-4" />
+                My Profile
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
