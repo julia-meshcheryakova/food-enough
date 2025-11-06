@@ -216,31 +216,49 @@ export default function ProfileSetup() {
                 <CardDescription>Load a preset profile and customize it</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="outline" onClick={() => loadPreset("vegetarian")} className="flex-1 min-w-[140px]">
+                <div className="flex flex-wrap gap-2">
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                    onClick={() => loadPreset("balancedAdult")}
+                  >
+                    Balanced Adult
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                    onClick={() => loadPreset("vegetarian")}
+                  >
                     Vegetarian
-                    <Badge variant="secondary" className="ml-2">
-                      Plant-Based
-                    </Badge>
-                  </Button>
-                  <Button variant="outline" onClick={() => loadPreset("vegan")} className="flex-1 min-w-[140px]">
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                    onClick={() => loadPreset("vegan")}
+                  >
                     Vegan
-                    <Badge variant="secondary" className="ml-2">
-                      No Animal Products
-                    </Badge>
-                  </Button>
-                  <Button variant="outline" onClick={() => loadPreset("fitnessEnthusiast")} className="flex-1 min-w-[140px]">
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                    onClick={() => loadPreset("fitnessEnthusiast")}
+                  >
                     Fitness
-                    <Badge variant="secondary" className="ml-2">
-                      High-Protein
-                    </Badge>
-                  </Button>
-                  <Button variant="outline" onClick={() => loadPreset("child")} className="flex-1 min-w-[140px]">
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                    onClick={() => loadPreset("child")}
+                  >
                     Child
-                    <Badge variant="secondary" className="ml-2">
-                      Kid-Friendly
-                    </Badge>
-                  </Button>
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                    onClick={() => loadPreset("sensitiveEater")}
+                  >
+                    Sensitive Eater
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
