@@ -206,8 +206,8 @@ export default function ProfileSetup() {
           <div className="mb-10">
             <h1 className="text-4xl font-bold text-foreground mb-4">Set up your food profile</h1>
             <p className="text-lg text-muted-foreground">
-              Tell us about your preferences so we can recommend the perfect dishes for you.<br/> We'll remember this next
-              time you scan a menu.
+              Tell us about your preferences so we can recommend the perfect dishes for you.
+              <br /> We'll remember this next time you scan a menu.
             </p>
           </div>
 
@@ -218,6 +218,14 @@ export default function ProfileSetup() {
                 <CardTitle className="text-primary">Your Current Profile</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                {goals.length > 0 && (
+                  <div>
+                    <span className="font-medium text-foreground">Goals: </span>
+                    <span className="text-muted-foreground">
+                      {goals.map((g) => DIETARY_GOALS.find((dg) => dg.id === g)?.label).join(", ")}
+                    </span>
+                  </div>
+                )}
                 {allergies.length > 0 && (
                   <div>
                     <span className="font-medium text-foreground">Allergies: </span>
@@ -242,71 +250,63 @@ export default function ProfileSetup() {
                     <span className="text-muted-foreground">{favoriteIngredients.join(", ")}</span>
                   </div>
                 )}
-                {goals.length > 0 && (
-                  <div>
-                    <span className="font-medium text-foreground">Goals: </span>
-                    <span className="text-muted-foreground">
-                      {goals.map((g) => DIETARY_GOALS.find((dg) => dg.id === g)?.label).join(", ")}
-                    </span>
-                  </div>
-                )}
               </CardContent>
             </Card>
           )}
 
           {/* Quick Profile Presets */}
           <Card className="bg-primary/5 border-2 border-primary/30 shadow-lg mb-8">
-              <CardHeader>
-                <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
-                <CardDescription>Load a preset profile and customize it</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
-                    onClick={() => loadPreset("balancedAdult")}
-                  >
-                    Balanced Adult
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
-                    onClick={() => loadPreset("vegetarian")}
-                  >
-                    Vegetarian
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
-                    onClick={() => loadPreset("vegan")}
-                  >
-                    Vegan
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
-                    onClick={() => loadPreset("fitnessEnthusiast")}
-                  >
-                    Fitness
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
-                    onClick={() => loadPreset("child")}
-                  >
-                    Child
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
-                    onClick={() => loadPreset("sensitiveEater")}
-                  >
-                    Sensitive Eater
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+            <CardHeader>
+              <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
+              <CardDescription>Load a preset profile and customize it</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                  onClick={() => loadPreset("balancedAdult")}
+                >
+                  Balanced Adult
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                  onClick={() => loadPreset("vegetarian")}
+                >
+                  Vegetarian
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                  onClick={() => loadPreset("vegan")}
+                >
+                  Vegan
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                  onClick={() => loadPreset("fitnessEnthusiast")}
+                >
+                  Fitness
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                  onClick={() => loadPreset("child")}
+                >
+                  Child
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer px-4 py-2 hover:bg-primary/10 transition-colors"
+                  onClick={() => loadPreset("sensitiveEater")}
+                >
+                  Sensitive Eater
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
 
           <div className="space-y-6 mt-8">
             {/* Allergies & Restrictions */}
