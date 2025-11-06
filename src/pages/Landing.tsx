@@ -13,22 +13,20 @@ export default function Landing() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 px-4 overflow-hidden">
+      <section className="relative pt-16 md:pt-24 pb-12 md:pb-16 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero opacity-5 pointer-events-none"></div>
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-              Your AI Waiter — helping you find the <span className="text-primary">perfect dish</span>
-              <br />
-              (or at least good enough ;)
+        <div className="container mx-auto max-w-3xl text-center">
+          <div className="space-y-4 md:space-y-6">
+            <h1 className="text-3xl md:text-5xl font-bold text-foreground leading-tight">
+              Your AI Waiter finds the <span className="text-primary">perfect dish</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Upload a menu or snap a photo. We'll tell you which dishes fit your tastes, diet, and goals.
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Upload any menu or snap a photo. Get instant recommendations based on your taste, diet, and allergies.
             </p>
-            <div className="pt-2">
+            <div className="pt-2 md:pt-4">
               <Link to="/profile">
                 <Button variant="hero" size="lg" className="shadow-hover">
-                  Try it now
+                  Get Started
                 </Button>
               </Link>
             </div>
