@@ -27,22 +27,6 @@ const DIETARY_GOALS = [
 ];
 
 const PRESET_PROFILES = {
-  julia: {
-    name: "Julia",
-    allergies: [],
-    restrictions: ["spicy", "alcohol"],
-    hatedIngredients: [],
-    favoriteIngredients: ["salmon", "avocado"],
-    goals: ["healthy", "high-protein"],
-  },
-  alex: {
-    name: "Alex",
-    allergies: [],
-    restrictions: [],
-    hatedIngredients: ["pork"],
-    favoriteIngredients: ["spicy", "eggs", "beans"],
-    goals: ["healthy"],
-  },
   child: {
     name: "Child",
     allergies: ["nuts"],
@@ -50,6 +34,46 @@ const PRESET_PROFILES = {
     hatedIngredients: [],
     favoriteIngredients: ["pasta", "chicken", "cheese"],
     goals: ["healthy"],
+  },
+  balancedAdult: {
+    name: "Balanced Adult",
+    allergies: [],
+    restrictions: [],
+    hatedIngredients: [],
+    favoriteIngredients: ["chicken", "rice", "vegetables"],
+    goals: ["healthy"],
+  },
+  fitnessEnthusiast: {
+    name: "Fitness Enthusiast",
+    allergies: [],
+    restrictions: ["alcohol"],
+    hatedIngredients: [],
+    favoriteIngredients: ["eggs", "chicken", "oats", "yogurt"],
+    goals: ["high-protein", "low-carb", "healthy"],
+  },
+  vegetarian: {
+    name: "Vegetarian",
+    allergies: [],
+    restrictions: ["pork", "beef", "fish"],
+    hatedIngredients: [],
+    favoriteIngredients: ["tofu", "lentils", "spinach", "mushrooms"],
+    goals: ["vegetarian", "healthy"],
+  },
+  vegan: {
+    name: "Vegan",
+    allergies: [],
+    restrictions: ["pork", "beef", "fish", "eggs", "dairy"],
+    hatedIngredients: [],
+    favoriteIngredients: ["tofu", "beans", "quinoa", "avocado"],
+    goals: ["vegan", "healthy"],
+  },
+  sensitiveEater: {
+    name: "Sensitive Eater",
+    allergies: ["gluten", "dairy"],
+    restrictions: ["spicy", "alcohol"],
+    hatedIngredients: [],
+    favoriteIngredients: ["rice", "chicken", "carrots"],
+    goals: ["healthy", "low-calorie"],
   },
 };
 
