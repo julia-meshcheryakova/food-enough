@@ -286,42 +286,46 @@ export default function ProfileSetup() {
             </p>
           </div>
 
-          {/* Summary Card - Moved to Top */}
-          {hasAnyData && (
-            <Card className="bg-gradient-card shadow-soft border-2 border-primary/20 mb-8">
-              <CardHeader>
-                <CardTitle className="text-primary">Your Current Profile</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {goals.length > 0 && (
-                  <div>
-                    <span className="font-medium text-foreground">Goals: </span>
-                    <span className="text-muted-foreground">
-                      {goals.map((g) => DIETARY_GOALS.find((dg) => dg.id === g)?.label).join(", ")}
-                    </span>
-                  </div>
-                )}
-                {restrictions.length > 0 && (
-                  <div>
-                    <span className="font-medium text-foreground">Restricted: </span>
-                    <span className="text-muted-foreground">{restrictions.join(", ")}</span>
-                  </div>
-                )}
-                {hatedIngredients.length > 0 && (
-                  <div>
-                    <span className="font-medium text-foreground">Hated: </span>
-                    <span className="text-muted-foreground">{hatedIngredients.join(", ")}</span>
-                  </div>
-                )}
-                {favoriteIngredients.length > 0 && (
-                  <div>
-                    <span className="font-medium text-foreground">Favorites: </span>
-                    <span className="text-muted-foreground">{favoriteIngredients.join(", ")}</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          {/* Summary Card - Always Visible */}
+          <Card className="bg-gradient-card shadow-soft border-2 border-primary/20 mb-8">
+            <CardHeader>
+              <CardTitle className="text-primary">Your Current Profile</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {!hasAnyData ? (
+                <p className="text-muted-foreground italic">No preferences set yet. Select a quick start profile or customize below.</p>
+              ) : (
+                <>
+                  {goals.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Goals: </span>
+                      <span className="text-muted-foreground">
+                        {goals.map((g) => DIETARY_GOALS.find((dg) => dg.id === g)?.label).join(", ")}
+                      </span>
+                    </div>
+                  )}
+                  {restrictions.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Restricted: </span>
+                      <span className="text-muted-foreground">{restrictions.join(", ")}</span>
+                    </div>
+                  )}
+                  {hatedIngredients.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Hated: </span>
+                      <span className="text-muted-foreground">{hatedIngredients.join(", ")}</span>
+                    </div>
+                  )}
+                  {favoriteIngredients.length > 0 && (
+                    <div>
+                      <span className="font-medium text-foreground">Favorites: </span>
+                      <span className="text-muted-foreground">{favoriteIngredients.join(", ")}</span>
+                    </div>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Quick Profile Presets */}
           <Card className="bg-primary/5 border-2 border-primary/30 shadow-lg mb-8">
