@@ -12,8 +12,19 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 const COMMON_RESTRICTIONS = [
-  "gluten", "dairy", "nuts", "peanuts", "shellfish", "eggs", "soy", "fish",
-  "spicy", "raw", "pork", "beef", "alcohol"
+  "gluten",
+  "dairy",
+  "nuts",
+  "peanuts",
+  "shellfish",
+  "eggs",
+  "soy",
+  "fish",
+  "spicy",
+  "raw",
+  "pork",
+  "beef",
+  "alcohol",
 ];
 
 const DIETARY_GOALS = [
@@ -131,10 +142,7 @@ export default function ProfileSetup() {
       try {
         const profile = JSON.parse(savedProfile);
         // Merge old allergies and restrictions if they exist separately
-        const combinedRestrictions = [
-          ...(profile.restrictions || []),
-          ...(profile.allergies || [])
-        ];
+        const combinedRestrictions = [...(profile.restrictions || []), ...(profile.allergies || [])];
         setRestrictions([...new Set(combinedRestrictions)]); // Remove duplicates
         setHatedIngredients(profile.hatedIngredients || []);
         setFavoriteIngredients(profile.favoriteIngredients || []);
@@ -165,22 +173,18 @@ export default function ProfileSetup() {
       setGoals(goals.filter((g) => g !== goalId));
     } else {
       setGoals([...goals, goalId]);
-      
+
       // Auto-populate ingredients based on goal
       const goalMapping = GOAL_TO_INGREDIENTS[goalId];
       if (goalMapping) {
         // Add favorite ingredients (avoid duplicates)
-        const newFavorites = goalMapping.favorites.filter(
-          (fav) => !favoriteIngredients.includes(fav)
-        );
+        const newFavorites = goalMapping.favorites.filter((fav) => !favoriteIngredients.includes(fav));
         if (newFavorites.length > 0) {
           setFavoriteIngredients([...favoriteIngredients, ...newFavorites]);
         }
-        
+
         // Add restrictions (avoid duplicates)
-        const newRestrictions = goalMapping.restrictions.filter(
-          (res) => !restrictions.includes(res)
-        );
+        const newRestrictions = goalMapping.restrictions.filter((res) => !restrictions.includes(res));
         if (newRestrictions.length > 0) {
           setRestrictions([...restrictions, ...newRestrictions]);
         }
@@ -259,7 +263,7 @@ export default function ProfileSetup() {
     setFavoriteIngredients([]);
     setGoals([]);
     sessionStorage.removeItem("currentProfileName");
-    
+
     toast({
       title: "Profile cleared",
       description: "All preferences have been reset.",
@@ -267,10 +271,7 @@ export default function ProfileSetup() {
   };
 
   const hasAnyData =
-    restrictions.length > 0 ||
-    hatedIngredients.length > 0 ||
-    favoriteIngredients.length > 0 ||
-    goals.length > 0;
+    restrictions.length > 0 || hatedIngredients.length > 0 || favoriteIngredients.length > 0 || goals.length > 0;
 
   return (
     <div className="min-h-screen">
@@ -293,7 +294,9 @@ export default function ProfileSetup() {
             </CardHeader>
             <CardContent className="space-y-3">
               {!hasAnyData ? (
-                <p className="text-muted-foreground italic">No preferences set yet. Select a quick start profile or customize below.</p>
+                <p className="text-muted-foreground italic">
+                  No preferences set yet. Select a quick start profile or customize below.
+                </p>
               ) : (
                 <>
                   {goals.length > 0 && (
@@ -382,7 +385,7 @@ export default function ProfileSetup() {
                   size="sm"
                   onClick={clearProfile}
                   disabled={!hasAnyData}
-                  className="px-4 py-2 border-2 border-green-700 hover:bg-green-700/10 font-semibold transition-colors"
+                  className="px-4 py-2 border-2 border-green-500 hover:bg-primary/10 transition-colors"
                 >
                   Clear All
                 </Button>
@@ -422,7 +425,9 @@ export default function ProfileSetup() {
             <Card className="shadow-soft">
               <CardHeader>
                 <CardTitle>Restricted Ingredients</CardTitle>
-                <CardDescription>Select allergies, dietary restrictions, and any ingredients you want to avoid</CardDescription>
+                <CardDescription>
+                  Select allergies, dietary restrictions, and any ingredients you want to avoid
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
