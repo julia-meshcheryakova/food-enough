@@ -41,18 +41,18 @@ const DIETARY_GOALS = [
 const GOAL_TO_INGREDIENTS: Record<string, { favorites: string[]; restrictions: string[] }> = {
   healthy: {
     favorites: ["vegetables", "fruits", "whole grains", "lean protein"],
-    restrictions: [],
+    restrictions: ["alcohol"],
   },
   "low-calorie": {
     favorites: ["leafy greens", "berries", "chicken breast", "fish"],
-    restrictions: [],
+    restrictions: ["alcohol"],
   },
   budget: {
     favorites: ["rice", "beans", "pasta", "eggs", "potatoes"],
     restrictions: [],
   },
   "high-protein": {
-    favorites: ["chicken", "eggs", "greek yogurt", "salmon", "tofu", "lean beef"],
+    favorites: ["chicken", "eggs", "greek yogurt", "salmon", "tofu"],
     restrictions: [],
   },
   vegetarian: {
@@ -64,12 +64,12 @@ const GOAL_TO_INGREDIENTS: Record<string, { favorites: string[]; restrictions: s
     restrictions: ["pork", "beef", "fish", "shellfish", "eggs", "dairy"],
   },
   "low-carb": {
-    favorites: ["cauliflower", "zucchini", "leafy greens", "eggs", "cheese", "meat"],
-    restrictions: [],
+    favorites: ["cauliflower", "zucchini", "leafy greens", "eggs", "cheese", "poultry"],
+    restrictions: ["alcohol"],
   },
   keto: {
     favorites: ["avocado", "fatty fish", "olive oil", "eggs", "cheese", "nuts"],
-    restrictions: [],
+    restrictions: ["alcohol"],
   },
 };
 
