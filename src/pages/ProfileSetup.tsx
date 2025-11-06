@@ -225,10 +225,10 @@ export default function ProfileSetup() {
     <div className="min-h-screen">
       <Navigation />
 
-      <div className="pt-32 pb-20 px-4">
+      <div className="pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-3">Set up your food profile</h1>
+          <div className="mb-10">
+            <h1 className="text-4xl font-bold text-foreground mb-4">Set up your food profile</h1>
             <p className="text-lg text-muted-foreground">
               Tell us about your preferences so we can recommend the perfect dishes for you. We'll remember this next
               time you scan a menu.
@@ -237,7 +237,7 @@ export default function ProfileSetup() {
 
           {/* Summary Card - Moved to Top */}
           {hasAnyData && (
-            <Card className="bg-gradient-card shadow-soft border-2 border-primary/20 mb-6">
+            <Card className="bg-gradient-card shadow-soft border-2 border-primary/20 mb-8">
               <CardHeader>
                 <CardTitle className="text-primary">Your Current Profile</CardTitle>
               </CardHeader>
@@ -288,9 +288,8 @@ export default function ProfileSetup() {
             </Card>
           )}
 
-          <div className="space-y-6">
-            {/* Quick Profile Presets */}
-            <Card className="mt-6 bg-primary/5 border-2 border-primary/30 shadow-lg">
+          {/* Quick Profile Presets */}
+          <Card className="bg-primary/5 border-2 border-primary/30 shadow-lg mb-8">
               <CardHeader>
                 <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
                 <CardDescription>Load a preset profile and customize it</CardDescription>
@@ -342,9 +341,8 @@ export default function ProfileSetup() {
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 mt-8">
             {/* Allergies & Restrictions */}
             <Card className="shadow-soft">
               <CardHeader>
@@ -549,7 +547,7 @@ export default function ProfileSetup() {
             </Card>
 
             {/* Save Button */}
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center pt-6">
               <Button variant="hero" size="lg" onClick={handleSave} disabled={!hasAnyData}>
                 Save profile & continue
               </Button>
