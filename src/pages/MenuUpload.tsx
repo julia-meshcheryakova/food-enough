@@ -159,28 +159,21 @@ export default function MenuUpload() {
 
           {!dishes.length ? (
             <>
-              <Tabs defaultValue="photo" className="mb-6">
-                <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-                  <TabsTrigger value="photo">
-                    <Camera className="w-4 h-4 mr-2" />
-                    Photo
-                  </TabsTrigger>
-                  <TabsTrigger value="text">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Text
-                  </TabsTrigger>
-                </TabsList>
+              <Card className="shadow-soft hover:shadow-hover transition-smooth">
+                <CardContent className="pt-6">
+                  <Tabs defaultValue="photo" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                      <TabsTrigger value="photo">
+                        <Camera className="w-4 h-4 mr-2" />
+                        Photo
+                      </TabsTrigger>
+                      <TabsTrigger value="text">
+                        <FileText className="w-4 h-4 mr-2" />
+                        Text
+                      </TabsTrigger>
+                    </TabsList>
 
-                <TabsContent value="photo">
-                  <Card className="shadow-soft hover:shadow-hover transition-smooth">
-                    <CardHeader className="text-center">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Camera className="w-8 h-8 text-primary" />
-                      </div>
-                      <CardTitle>Take or upload a photo</CardTitle>
-                      <CardDescription>Snap a picture or choose from your device</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
+                    <TabsContent value="photo" className="space-y-3">
                       <input
                         ref={cameraInputRef}
                         type="file"
@@ -214,30 +207,19 @@ export default function MenuUpload() {
                         <Upload className="w-4 h-4 mr-2" />
                         Upload from Device
                       </Button>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
+                    </TabsContent>
 
-                <TabsContent value="text">
-                  <Card className="shadow-soft hover:shadow-hover transition-smooth">
-                    <CardHeader className="text-center">
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <FileText className="w-8 h-8 text-primary" />
-                      </div>
-                      <CardTitle>Paste menu text</CardTitle>
-                      <CardDescription>Copy and paste the menu content</CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                    <TabsContent value="text">
                       <Textarea
                         placeholder="Paste menu text here..."
                         value={menuText}
                         onChange={(e) => setMenuText(e.target.value)}
                         className="min-h-[200px]"
                       />
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
 
               {imagePreview && (
                 <Card className="mb-6 shadow-soft">
