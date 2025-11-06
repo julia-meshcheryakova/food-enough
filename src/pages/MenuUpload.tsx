@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, FileText, Upload, Loader2, ChefHat, Flame, Wine, Leaf } from "lucide-react";
+import { Camera, FileText, Upload, Loader2, ChefHat, Flame, Wine, Leaf, Trash2 } from "lucide-react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
@@ -24,8 +24,8 @@ interface Dish {
 }
 
 export default function MenuUpload() {
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [menuText, setMenuText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [dishes, setDishes] = useState<Dish[]>([]);
@@ -44,19 +44,55 @@ export default function MenuUpload() {
       return;
     }
 
-    setImageFile(file);
+    if (imageFiles.length >= 3) {
+      toast({
+        title: "Maximum images reached",
+        description: "You can upload up to 3 menu images",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setImageFiles(prev => [...prev, file]);
     const reader = new FileReader();
     reader.onload = (event) => {
-      setImagePreview(event.target?.result as string);
+      setImagePreviews(prev => [...prev, event.target?.result as string]);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      processImageFile(file);
+  const processMultipleFiles = (files: FileList) => {
+    const fileArray = Array.from(files);
+    const remainingSlots = 3 - imageFiles.length;
+    const filesToProcess = fileArray.slice(0, remainingSlots);
+
+    if (fileArray.length > remainingSlots) {
+      toast({
+        title: "Maximum images reached",
+        description: `You can only upload ${remainingSlots} more image(s)`,
+        variant: "destructive",
+      });
     }
+
+    filesToProcess.forEach(file => {
+      if (file.type.startsWith("image/")) {
+        processImageFile(file);
+      }
+    });
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      processMultipleFiles(files);
+    }
+    // Reset input value to allow uploading the same file again
+    e.target.value = '';
+  };
+
+  const removeImage = (index: number) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleDragEnter = (e: React.DragEvent) => {
@@ -81,17 +117,17 @@ export default function MenuUpload() {
     e.stopPropagation();
     setIsDragging(false);
 
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      processImageFile(file);
+    const files = e.dataTransfer.files;
+    if (files) {
+      processMultipleFiles(files);
     }
   };
 
   const analyzeMenu = async () => {
-    if (!imageFile && !menuText.trim()) {
+    if (imageFiles.length === 0 && !menuText.trim()) {
       toast({
         title: "No input provided",
-        description: "Please upload an image or paste menu text",
+        description: "Please upload at least one image or paste menu text",
         variant: "destructive",
       });
       return;
@@ -99,42 +135,64 @@ export default function MenuUpload() {
 
     setIsAnalyzing(true);
     try {
-      let imageData = "";
+      let allDishes: Dish[] = [];
 
-      if (imageFile) {
-        // Convert image to base64
+      // Process all images
+      for (const imageFile of imageFiles) {
         const reader = new FileReader();
-        imageData = await new Promise<string>((resolve, reject) => {
+        const imageData = await new Promise<string>((resolve, reject) => {
           reader.onload = () => resolve(reader.result as string);
           reader.onerror = reject;
           reader.readAsDataURL(imageFile);
         });
+
+        const { data, error } = await supabase.functions.invoke("parse-menu", {
+          body: {
+            image: imageData,
+            text: null,
+            useCache: appConfig.useCache,
+          },
+        });
+
+        if (error) {
+          console.error('Error parsing image:', error);
+          continue;
+        }
+
+        if (data?.dishes) {
+          allDishes = [...allDishes, ...data.dishes];
+        }
       }
 
-      const { data, error } = await supabase.functions.invoke("parse-menu", {
-        body: {
-          image: imageData || null,
-          text: menuText || null,
-          useCache: appConfig.useCache,
-        },
-      });
+      // Process text if provided
+      if (menuText.trim()) {
+        const { data, error } = await supabase.functions.invoke("parse-menu", {
+          body: {
+            image: null,
+            text: menuText,
+            useCache: appConfig.useCache,
+          },
+        });
 
-      if (error) throw error;
+        if (!error && data?.dishes) {
+          allDishes = [...allDishes, ...data.dishes];
+        }
+      }
 
-      if (data?.dishes && data.dishes.length > 0) {
-        setDishes(data.dishes);
+      if (allDishes.length > 0) {
+        setDishes(allDishes);
 
         // Store parsed menu in localStorage for Results page
-        localStorage.setItem("parsedMenu", JSON.stringify(data.dishes));
+        localStorage.setItem("parsedMenu", JSON.stringify(allDishes));
 
         toast({
           title: "Menu analyzed!",
-          description: `Found ${data.dishes.length} dishes`,
+          description: `Found ${allDishes.length} dishes`,
         });
       } else {
         toast({
           title: "No dishes found",
-          description: "Try uploading a clearer image or adding more text",
+          description: "Try uploading clearer images or adding more text",
           variant: "destructive",
         });
       }
@@ -142,7 +200,7 @@ export default function MenuUpload() {
       console.error("Error analyzing menu:", error);
       toast({
         title: "Analysis failed",
-        description: "Please try again with a different image or text",
+        description: "Please try again with different images or text",
         variant: "destructive",
       });
     } finally {
@@ -218,9 +276,11 @@ export default function MenuUpload() {
                       >
                         <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                         <p className="text-sm text-muted-foreground mb-2">
-                          Drag and drop an image here
+                          Drag and drop images here
                         </p>
-                        <p className="text-xs text-muted-foreground">or use the buttons below</p>
+                        <p className="text-xs text-muted-foreground">
+                          Up to 3 menu images • or use buttons below
+                        </p>
                       </div>
                       
                       <input
@@ -235,6 +295,7 @@ export default function MenuUpload() {
                         ref={fileInputRef}
                         type="file"
                         accept="image/*"
+                        multiple
                         className="hidden"
                         onChange={handleImageUpload}
                       />
@@ -245,6 +306,7 @@ export default function MenuUpload() {
                           variant="default" 
                           className="w-full"
                           size="lg"
+                          disabled={imageFiles.length >= 3}
                         >
                           <Camera className="w-4 h-4 mr-2" />
                           Camera
@@ -254,11 +316,18 @@ export default function MenuUpload() {
                           variant="outline" 
                           className="w-full"
                           size="lg"
+                          disabled={imageFiles.length >= 3}
                         >
                           <Upload className="w-4 h-4 mr-2" />
                           Upload
                         </Button>
                       </div>
+
+                      {imagePreviews.length > 0 && (
+                        <div className="text-sm text-muted-foreground text-center">
+                          {imagePreviews.length} / 3 images uploaded
+                        </div>
+                      )}
                     </TabsContent>
 
                     <TabsContent value="text" className="mt-0">
@@ -273,17 +342,31 @@ export default function MenuUpload() {
                 </CardContent>
               </Card>
 
-              {imagePreview && (
+              {imagePreviews.length > 0 && (
                 <Card className="my-8 shadow-soft">
                   <CardHeader>
-                    <CardTitle className="text-lg">Image Preview</CardTitle>
+                    <CardTitle className="text-lg">Image Previews ({imagePreviews.length})</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <img
-                      src={imagePreview}
-                      alt="Menu preview"
-                      className="w-full rounded-lg max-h-96 object-contain bg-muted"
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {imagePreviews.map((preview, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={preview}
+                            alt={`Menu preview ${index + 1}`}
+                            className="w-full rounded-lg max-h-64 object-contain bg-muted"
+                          />
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => removeImage(index)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               )}
@@ -291,7 +374,7 @@ export default function MenuUpload() {
               <div className="text-center mt-8">
                 <Button
                   onClick={analyzeMenu}
-                  disabled={isAnalyzing || (!imageFile && !menuText.trim())}
+                  disabled={isAnalyzing || (imageFiles.length === 0 && !menuText.trim())}
                   size="lg"
                   className="px-8"
                 >
