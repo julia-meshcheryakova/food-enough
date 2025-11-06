@@ -162,7 +162,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <Footer className="mt-0 pt-0" />
+      <Footer />
     </div>
   );
 }
