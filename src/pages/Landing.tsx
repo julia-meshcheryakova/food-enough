@@ -148,7 +148,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section id="restaurants" className="py-24 px-4 bg-gradient-hero relative overflow-hidden">
+      <section id="restaurants" className="pt-24 pb-16 px-4 bg-gradient-hero relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
         <div className="container mx-auto text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-6">Restaurant owner?</h2>
