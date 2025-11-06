@@ -11,7 +11,13 @@ export const isFirstTimeUser = (): boolean => {
     const hasProfile = localStorage.getItem('foodEnoughProfile') !== null;
     return !hasProfile;
   }
-  return JSON.parse(stored);
+  try {
+    return JSON.parse(stored);
+  } catch {
+    // If parsing fails, check localStorage
+    const hasProfile = localStorage.getItem('foodEnoughProfile') !== null;
+    return !hasProfile;
+  }
 };
 
 export const setPreviousPage = (page: string) => {

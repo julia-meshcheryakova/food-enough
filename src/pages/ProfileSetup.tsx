@@ -11,7 +11,7 @@ import { X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { filterConflictingIngredients } from "@/lib/ingredientMapping";
-import { getPreviousPage, clearPreviousPage, setPreviousPage, isFirstTimeUser } from "@/lib/sessionState";
+import { getPreviousPage, clearPreviousPage } from "@/lib/sessionState";
 
 const COMMON_RESTRICTIONS = [
   "gluten",

@@ -14,10 +14,8 @@ export default function Landing() {
   const handleGetStarted = () => {
     const isFirstTime = isFirstTimeUser();
     if (isFirstTime) {
-      setFirstTimeUser(true);
       navigate("/profile");
     } else {
-      setFirstTimeUser(false);
       navigate("/menu");
     }
   };
