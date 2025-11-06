@@ -21,6 +21,10 @@ const COMMON_RESTRICTIONS = [
   "eggs",
   "soy",
   "fish",
+  "seafood",
+  "meat",
+  "poultry",
+  "red meat",
   "spicy",
   "raw",
   "pork",
@@ -160,6 +164,29 @@ export default function ProfileSetup() {
       setGoals(preset.goals);
     }
   }, []);
+
+  const toggleRestriction = (item: string) => {
+    if (restrictions.includes(item)) {
+      setRestrictions(restrictions.filter((i) => i !== item));
+    } else {
+      const updatedRestrictions = [...restrictions, item];
+      setRestrictions(updatedRestrictions);
+      
+      // Filter out conflicting favorites
+      const filteredFavorites = filterConflictingIngredients(favoriteIngredients, updatedRestrictions);
+      const removedFavorites = favoriteIngredients.filter(
+        (fav) => !filteredFavorites.includes(fav)
+      );
+      
+      if (removedFavorites.length > 0) {
+        setFavoriteIngredients(filteredFavorites);
+        toast({
+          title: "Favorites updated",
+          description: `Removed conflicting ingredients: ${removedFavorites.join(", ")}`,
+        });
+      }
+    }
+  };
 
   const toggleItem = (item: string, list: string[], setList: (list: string[]) => void) => {
     if (list.includes(item)) {
@@ -459,7 +486,7 @@ export default function ProfileSetup() {
                         key={restriction}
                         variant={restrictions.includes(restriction) ? "destructive" : "outline"}
                         className="cursor-pointer px-4 py-2"
-                        onClick={() => toggleItem(restriction, restrictions, setRestrictions)}
+                        onClick={() => toggleRestriction(restriction)}
                       >
                         {restriction}
                       </Badge>
