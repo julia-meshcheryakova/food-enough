@@ -27,6 +27,41 @@ const DIETARY_GOALS = [
   { id: "keto", label: "Keto" },
 ];
 
+const GOAL_TO_INGREDIENTS: Record<string, { favorites: string[]; restrictions: string[] }> = {
+  healthy: {
+    favorites: ["vegetables", "fruits", "whole grains", "lean protein"],
+    restrictions: [],
+  },
+  "low-calorie": {
+    favorites: ["leafy greens", "berries", "chicken breast", "fish"],
+    restrictions: [],
+  },
+  budget: {
+    favorites: ["rice", "beans", "pasta", "eggs", "potatoes"],
+    restrictions: [],
+  },
+  "high-protein": {
+    favorites: ["chicken", "eggs", "greek yogurt", "salmon", "tofu", "lean beef"],
+    restrictions: [],
+  },
+  vegetarian: {
+    favorites: ["lentils", "chickpeas", "tofu", "quinoa", "vegetables"],
+    restrictions: ["pork", "beef", "fish", "shellfish"],
+  },
+  vegan: {
+    favorites: ["tofu", "tempeh", "beans", "nuts", "seeds", "nutritional yeast"],
+    restrictions: ["pork", "beef", "fish", "shellfish", "eggs", "dairy"],
+  },
+  "low-carb": {
+    favorites: ["cauliflower", "zucchini", "leafy greens", "eggs", "cheese", "meat"],
+    restrictions: [],
+  },
+  keto: {
+    favorites: ["avocado", "fatty fish", "olive oil", "eggs", "cheese", "nuts"],
+    restrictions: [],
+  },
+};
+
 const PRESET_PROFILES = {
   child: {
     name: "Child",
@@ -125,6 +160,34 @@ export default function ProfileSetup() {
     }
   };
 
+  const toggleGoal = (goalId: string) => {
+    if (goals.includes(goalId)) {
+      setGoals(goals.filter((g) => g !== goalId));
+    } else {
+      setGoals([...goals, goalId]);
+      
+      // Auto-populate ingredients based on goal
+      const goalMapping = GOAL_TO_INGREDIENTS[goalId];
+      if (goalMapping) {
+        // Add favorite ingredients (avoid duplicates)
+        const newFavorites = goalMapping.favorites.filter(
+          (fav) => !favoriteIngredients.includes(fav)
+        );
+        if (newFavorites.length > 0) {
+          setFavoriteIngredients([...favoriteIngredients, ...newFavorites]);
+        }
+        
+        // Add restrictions (avoid duplicates)
+        const newRestrictions = goalMapping.restrictions.filter(
+          (res) => !restrictions.includes(res)
+        );
+        if (newRestrictions.length > 0) {
+          setRestrictions([...restrictions, ...newRestrictions]);
+        }
+      }
+    }
+  };
+
   const addIngredient = (
     value: string,
     list: string[],
@@ -190,6 +253,19 @@ export default function ProfileSetup() {
     });
   };
 
+  const clearProfile = () => {
+    setRestrictions([]);
+    setHatedIngredients([]);
+    setFavoriteIngredients([]);
+    setGoals([]);
+    sessionStorage.removeItem("currentProfileName");
+    
+    toast({
+      title: "Profile cleared",
+      description: "All preferences have been reset.",
+    });
+  };
+
   const hasAnyData =
     restrictions.length > 0 ||
     hatedIngredients.length > 0 ||
@@ -250,8 +326,21 @@ export default function ProfileSetup() {
           {/* Quick Profile Presets */}
           <Card className="bg-primary/5 border-2 border-primary/30 shadow-lg mb-8">
             <CardHeader>
-              <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
-              <CardDescription>Load a preset profile and customize it</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
+                  <CardDescription>Load a preset profile and customize it</CardDescription>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={clearProfile}
+                  disabled={!hasAnyData}
+                  className="font-semibold"
+                >
+                  Clear All
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -315,7 +404,7 @@ export default function ProfileSetup() {
                       <Checkbox
                         id={goal.id}
                         checked={goals.includes(goal.id)}
-                        onCheckedChange={() => toggleItem(goal.id, goals, setGoals)}
+                        onCheckedChange={() => toggleGoal(goal.id)}
                       />
                       <Label
                         htmlFor={goal.id}
