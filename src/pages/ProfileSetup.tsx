@@ -336,11 +336,11 @@ export default function ProfileSetup() {
               </CardContent>
             </Card>
 
-            {/* Allergies & Restrictions */}
+            {/* Restricted Ingredients */}
             <Card className="shadow-soft">
               <CardHeader>
-                <CardTitle>Allergies & Restrictions</CardTitle>
-                <CardDescription>Select any allergies or dietary restrictions we should watch out for</CardDescription>
+                <CardTitle>Restricted Ingredients</CardTitle>
+                <CardDescription>Select allergies, dietary restrictions, and any ingredients you want to avoid</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -374,48 +374,42 @@ export default function ProfileSetup() {
                     ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Hated Ingredients */}
-            <Card className="shadow-soft">
-              <CardHeader>
-                <CardTitle>Hated Ingredients</CardTitle>
-                <CardDescription>Add ingredients you absolutely can't stand</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-2 mb-3">
-                  <Input
-                    placeholder="e.g., cilantro, olives, mushrooms..."
-                    value={newHated}
-                    onChange={(e) => setNewHated(e.target.value)}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated);
-                      }
-                    }}
-                  />
-                  <Button
-                    variant="secondary"
-                    onClick={() => addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated)}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-
-                {hatedIngredients.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {hatedIngredients.map((ingredient) => (
-                      <Badge key={ingredient} variant="destructive" className="px-3 py-1">
-                        {ingredient}
-                        <X
-                          className="w-3 h-3 ml-2 cursor-pointer"
-                          onClick={() => removeIngredient(ingredient, hatedIngredients, setHatedIngredients)}
-                        />
-                      </Badge>
-                    ))}
+                <div>
+                  <Label className="text-base mb-3 block">Custom Ingredients to Avoid</Label>
+                  <div className="flex gap-2 mb-3">
+                    <Input
+                      placeholder="e.g., cilantro, olives, mushrooms..."
+                      value={newHated}
+                      onChange={(e) => setNewHated(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated);
+                        }
+                      }}
+                    />
+                    <Button
+                      variant="secondary"
+                      onClick={() => addIngredient(newHated, hatedIngredients, setHatedIngredients, setNewHated)}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
                   </div>
-                )}
+
+                  {hatedIngredients.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {hatedIngredients.map((ingredient) => (
+                        <Badge key={ingredient} variant="destructive" className="px-3 py-1">
+                          {ingredient}
+                          <X
+                            className="w-3 h-3 ml-2 cursor-pointer"
+                            onClick={() => removeIngredient(ingredient, hatedIngredients, setHatedIngredients)}
+                          />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
