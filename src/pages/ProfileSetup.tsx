@@ -397,8 +397,11 @@ export default function ProfileSetup() {
             {/* Goals */}
             <Card className="shadow-soft">
               <CardHeader>
-                <CardTitle>Dietary Goals</CardTitle>
-                <CardDescription>Select any goals that matter to you</CardDescription>
+                <CardTitle>Dietary Goals*</CardTitle>
+                <CardDescription>
+                  Select any goals that matter to you
+                  <br />* New feature in testing
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
