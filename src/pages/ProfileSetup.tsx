@@ -309,6 +309,33 @@ export default function ProfileSetup() {
           </Card>
 
           <div className="space-y-6 mt-8">
+            {/* Goals */}
+            <Card className="shadow-soft">
+              <CardHeader>
+                <CardTitle>Dietary Goals</CardTitle>
+                <CardDescription>Select any goals that matter to you</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {DIETARY_GOALS.map((goal) => (
+                    <div key={goal.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={goal.id}
+                        checked={goals.includes(goal.id)}
+                        onCheckedChange={() => toggleItem(goal.id, goals, setGoals)}
+                      />
+                      <Label
+                        htmlFor={goal.id}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        {goal.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Allergies & Restrictions */}
             <Card className="shadow-soft">
               <CardHeader>
@@ -433,33 +460,6 @@ export default function ProfileSetup() {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
-
-            {/* Goals */}
-            <Card className="shadow-soft">
-              <CardHeader>
-                <CardTitle>Dietary Goals</CardTitle>
-                <CardDescription>Select any goals that matter to you</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {DIETARY_GOALS.map((goal) => (
-                    <div key={goal.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={goal.id}
-                        checked={goals.includes(goal.id)}
-                        onCheckedChange={() => toggleItem(goal.id, goals, setGoals)}
-                      />
-                      <Label
-                        htmlFor={goal.id}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                      >
-                        {goal.label}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
               </CardContent>
             </Card>
 
