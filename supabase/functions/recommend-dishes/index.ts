@@ -59,7 +59,16 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    console.log("Received profile:", profile);
+    // Ensure all profile arrays have default values
+    const safeProfile = {
+      allergies: profile.allergies || [],
+      restrictions: profile.restrictions || [],
+      hatedIngredients: profile.hatedIngredients || [],
+      favoriteIngredients: profile.favoriteIngredients || [],
+      goals: profile.goals || [],
+    };
+
+    console.log("Received profile:", safeProfile);
     console.log("Received menu with", menu.length, "dishes");
 
     const scoredDishes: ScoredDish[] = menu.map((dish) => {
@@ -71,24 +80,24 @@ serve(async (req) => {
       const tagsLower = dish.tags.map((t) => t.toLowerCase());
 
       // ---- Favorites (check both ingredients and tags) ----
-      const favIngredientsMatches = includesAny(ingredientsLower, profile.favoriteIngredients);
-      const favTagsMatches = includesAny(tagsLower, profile.favoriteIngredients);
+      const favIngredientsMatches = includesAny(ingredientsLower, safeProfile.favoriteIngredients);
+      const favTagsMatches = includesAny(tagsLower, safeProfile.favoriteIngredients);
       const allFavMatches = [...new Set([...favIngredientsMatches, ...favTagsMatches])];
       allFavMatches.forEach((f) => reasoning.push(`Contains your favorite: ${f}`));
       score += allFavMatches.length * SCORE.FAVORITE;
 
       // ---- Hated ----
-      const hateMatches = includesAny(ingredientsLower, profile.hatedIngredients);
+      const hateMatches = includesAny(ingredientsLower, safeProfile.hatedIngredients);
       hateMatches.forEach((h) => reasoning.push(`Contains ingredient you dislike: ${h}`));
       score += hateMatches.length * SCORE.HATED;
 
       // ---- Allergies ----
-      const allergyMatches = includesAny(allergensLower, profile.allergies);
+      const allergyMatches = includesAny(allergensLower, safeProfile.allergies);
       allergyMatches.forEach((a) => reasoning.push(`⚠️ Contains allergen: ${a}`));
       score += allergyMatches.length * SCORE.ALLERGEN;
 
       // ---- Restrictions ----
-      const restrictionMatches = includesAny(ingredientsLower, profile.restrictions);
+      const restrictionMatches = includesAny(ingredientsLower, safeProfile.restrictions);
       restrictionMatches.forEach((r) => reasoning.push(`May conflict with restriction: ${r}`));
       score += restrictionMatches.length * SCORE.RESTRICTION;
 
