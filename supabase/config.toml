@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.generate-dish-image]
 verify_jwt = false
+
+[functions.clear-menu-cache]
+verify_jwt = false
+
+[functions.clear-dish-image-cache]
+verify_jwt = false
