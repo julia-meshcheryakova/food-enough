@@ -138,7 +138,7 @@ serve(async (req) => {
 - tags: array of strings (cooking methods like "fried", "grilled", "baked", plus dietary tags like "spicy", "vegetarian", "vegan", "alcohol")
 
 IMPORTANT: 
-- For ingredients, use ONLY raw ingredient names without any descriptors: eggs, not poached eggs, salmon, not smoked salmon
+- For ingredients, use ONLY raw ingredient names without any descriptors: eggs - not poached eggs, salmon - not smoked salmon, coffee - not espresson or latte
 - Move all cooking methods and descriptors (fried, grilled, roasted, fresh, etc.) to tags
 - In probable_ingredients, list common cooking staples typically used and ingridients for standard receipts that were not explicitly mentioned
 
