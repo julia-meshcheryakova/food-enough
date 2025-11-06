@@ -206,7 +206,7 @@ export default function ProfileSetup() {
           <div className="mb-10">
             <h1 className="text-4xl font-bold text-foreground mb-4">Set up your food profile</h1>
             <p className="text-lg text-muted-foreground">
-              Tell us about your preferences so we can recommend the perfect dishes for you. We'll remember this next
+              Tell us about your preferences so we can recommend the perfect dishes for you.<br/> We'll remember this next
               time you scan a menu.
             </p>
           </div>
