@@ -382,7 +382,7 @@ export default function ProfileSetup() {
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="cursor-pointer px-4 py-2 border-green-500 hover:bg-primary/10 transition-colors"
+                  className="cursor-pointer px-4 py-2 border-green-700 hover:bg-primary/10 transition-colors"
                   onClick={clearProfile}
                   disabled={!hasAnyData}
                 >
