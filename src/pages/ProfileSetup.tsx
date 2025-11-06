@@ -326,21 +326,8 @@ export default function ProfileSetup() {
           {/* Quick Profile Presets */}
           <Card className="bg-primary/5 border-2 border-primary/30 shadow-lg mb-8">
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
-                  <CardDescription>Load a preset profile and customize it</CardDescription>
-                </div>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={clearProfile}
-                  disabled={!hasAnyData}
-                  className="font-semibold"
-                >
-                  Clear All
-                </Button>
-              </div>
+              <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
+              <CardDescription>Load a preset profile and customize it</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -386,6 +373,15 @@ export default function ProfileSetup() {
                 >
                   Sensitive Eater
                 </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearProfile}
+                  disabled={!hasAnyData}
+                  className="px-4 py-2 border-2 border-green-700 hover:bg-green-700/10 font-semibold transition-colors"
+                >
+                  Clear All
+                </Button>
               </div>
             </CardContent>
           </Card>
