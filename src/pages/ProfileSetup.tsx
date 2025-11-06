@@ -11,9 +11,10 @@ import { X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-const COMMON_ALLERGIES = ["gluten", "dairy", "nuts", "peanuts", "shellfish", "eggs", "soy", "fish"];
-
-const COMMON_RESTRICTIONS = ["spicy", "raw", "pork", "beef", "alcohol"];
+const COMMON_RESTRICTIONS = [
+  "gluten", "dairy", "nuts", "peanuts", "shellfish", "eggs", "soy", "fish",
+  "spicy", "raw", "pork", "beef", "alcohol"
+];
 
 const DIETARY_GOALS = [
   { id: "healthy", label: "Healthy" },
@@ -81,7 +82,6 @@ export default function ProfileSetup() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [allergies, setAllergies] = useState<string[]>([]);
   const [restrictions, setRestrictions] = useState<string[]>([]);
   const [hatedIngredients, setHatedIngredients] = useState<string[]>([]);
   const [favoriteIngredients, setFavoriteIngredients] = useState<string[]>([]);
@@ -95,8 +95,12 @@ export default function ProfileSetup() {
     if (savedProfile) {
       try {
         const profile = JSON.parse(savedProfile);
-        setAllergies(profile.allergies || []);
-        setRestrictions(profile.restrictions || []);
+        // Merge old allergies and restrictions if they exist separately
+        const combinedRestrictions = [
+          ...(profile.restrictions || []),
+          ...(profile.allergies || [])
+        ];
+        setRestrictions([...new Set(combinedRestrictions)]); // Remove duplicates
         setHatedIngredients(profile.hatedIngredients || []);
         setFavoriteIngredients(profile.favoriteIngredients || []);
         setGoals(profile.goals || []);
@@ -106,8 +110,7 @@ export default function ProfileSetup() {
     } else {
       // No saved profile, load balancedAdult as default
       const preset = PRESET_PROFILES.balancedAdult;
-      setAllergies(preset.allergies);
-      setRestrictions(preset.restrictions);
+      setRestrictions([...preset.allergies, ...preset.restrictions]);
       setHatedIngredients(preset.hatedIngredients);
       setFavoriteIngredients(preset.favoriteIngredients);
       setGoals(preset.goals);
@@ -141,7 +144,6 @@ export default function ProfileSetup() {
   const handleSave = () => {
     const profile = {
       name: sessionStorage.getItem("currentProfileName") || "Custom",
-      allergies,
       restrictions,
       hatedIngredients,
       favoriteIngredients,
@@ -164,8 +166,7 @@ export default function ProfileSetup() {
 
   const loadPreset = (presetKey: keyof typeof PRESET_PROFILES) => {
     const preset = PRESET_PROFILES[presetKey];
-    setAllergies(preset.allergies);
-    setRestrictions(preset.restrictions);
+    setRestrictions([...preset.allergies, ...preset.restrictions]);
     setHatedIngredients(preset.hatedIngredients);
     setFavoriteIngredients(preset.favoriteIngredients);
     setGoals(preset.goals);
@@ -173,8 +174,7 @@ export default function ProfileSetup() {
     // Auto-save preset profile to session
     const profile = {
       name: preset.name,
-      allergies: preset.allergies,
-      restrictions: preset.restrictions,
+      restrictions: [...preset.allergies, ...preset.restrictions],
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
@@ -191,7 +191,6 @@ export default function ProfileSetup() {
   };
 
   const hasAnyData =
-    allergies.length > 0 ||
     restrictions.length > 0 ||
     hatedIngredients.length > 0 ||
     favoriteIngredients.length > 0 ||
@@ -226,15 +225,9 @@ export default function ProfileSetup() {
                     </span>
                   </div>
                 )}
-                {allergies.length > 0 && (
-                  <div>
-                    <span className="font-medium text-foreground">Allergies: </span>
-                    <span className="text-muted-foreground">{allergies.join(", ")}</span>
-                  </div>
-                )}
                 {restrictions.length > 0 && (
                   <div>
-                    <span className="font-medium text-foreground">Restrictions: </span>
+                    <span className="font-medium text-foreground">Restricted: </span>
                     <span className="text-muted-foreground">{restrictions.join(", ")}</span>
                   </div>
                 )}
@@ -344,23 +337,7 @@ export default function ProfileSetup() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-base mb-3 block">Common Allergies</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {COMMON_ALLERGIES.map((allergy) => (
-                      <Badge
-                        key={allergy}
-                        variant={allergies.includes(allergy) ? "destructive" : "outline"}
-                        className="cursor-pointer px-4 py-2"
-                        onClick={() => toggleItem(allergy, allergies, setAllergies)}
-                      >
-                        {allergy}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-base mb-3 block">Other Restrictions</Label>
+                  <Label className="text-base mb-3 block">Common Restrictions</Label>
                   <div className="flex flex-wrap gap-2">
                     {COMMON_RESTRICTIONS.map((restriction) => (
                       <Badge
