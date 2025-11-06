@@ -241,17 +241,49 @@ export default function ProfileSetup() {
               <CardHeader>
                 <CardTitle className="text-primary">Your Current Profile</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {profilePhoto && (
-                  <div className="flex items-center gap-3 pb-3 border-b border-border">
-                    <img
-                      src={profilePhoto}
-                      alt="Profile"
-                      className="w-16 h-16 rounded-full object-cover border-2 border-primary/30"
+              <CardContent className="space-y-4">
+                {/* Profile Photo Upload */}
+                <div className="flex items-center gap-4 pb-4 border-b border-border">
+                  {profilePhoto ? (
+                    <div className="relative">
+                      <img
+                        src={profilePhoto}
+                        alt="Profile"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-primary/30"
+                      />
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+                        onClick={() => setProfilePhoto("")}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30">
+                      <User className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <Label htmlFor="photo-upload" className="cursor-pointer">
+                      <div className="flex items-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors inline-flex text-sm">
+                        <Upload className="w-4 h-4" />
+                        <span>{profilePhoto ? "Change Photo" : "Upload Photo"}</span>
+                      </div>
+                    </Label>
+                    <Input
+                      id="photo-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handlePhotoUpload}
                     />
-                    <span className="text-sm text-muted-foreground">Profile photo saved</span>
+                    <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, or WebP</p>
                   </div>
-                )}
+                </div>
+
+                {/* Profile Details */}
                 {allergies.length > 0 && (
                   <div>
                     <span className="font-medium text-foreground">Allergies: </span>
@@ -379,55 +411,6 @@ export default function ProfileSetup() {
                         {restriction}
                       </Badge>
                     ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Profile Photo */}
-            <Card className="shadow-soft">
-              <CardHeader>
-                <CardTitle>Profile Photo</CardTitle>
-                <CardDescription>Upload a photo to personalize your profile (optional)</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-4">
-                  {profilePhoto ? (
-                    <div className="relative">
-                      <img
-                        src={profilePhoto}
-                        alt="Profile"
-                        className="w-24 h-24 rounded-full object-cover border-2 border-primary/30"
-                      />
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                        onClick={() => setProfilePhoto("")}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30">
-                      <User className="w-10 h-10 text-muted-foreground" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <Label htmlFor="photo-upload" className="cursor-pointer">
-                      <div className="flex items-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors inline-flex">
-                        <Upload className="w-4 h-4" />
-                        <span>{profilePhoto ? "Change Photo" : "Upload Photo"}</span>
-                      </div>
-                    </Label>
-                    <Input
-                      id="photo-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handlePhotoUpload}
-                    />
-                    <p className="text-xs text-muted-foreground mt-2">Max 5MB • JPG, PNG, or WebP</p>
                   </div>
                 </div>
               </CardContent>

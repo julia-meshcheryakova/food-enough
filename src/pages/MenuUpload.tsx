@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, FileText, Upload, Loader2, ChefHat, Flame, Wine, Leaf, Trash2 } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,6 +33,42 @@ export default function MenuUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
+  // Load saved images and text on mount
+  useEffect(() => {
+    const savedPreviews = sessionStorage.getItem("menuImagePreviews");
+    const savedText = sessionStorage.getItem("menuText");
+    
+    if (savedPreviews) {
+      try {
+        const previews = JSON.parse(savedPreviews);
+        setImagePreviews(previews);
+      } catch (error) {
+        console.error("Failed to load saved image previews:", error);
+      }
+    }
+    
+    if (savedText) {
+      setMenuText(savedText);
+    }
+  }, []);
+
+  // Save images and text whenever they change
+  useEffect(() => {
+    if (imagePreviews.length > 0) {
+      sessionStorage.setItem("menuImagePreviews", JSON.stringify(imagePreviews));
+    } else {
+      sessionStorage.removeItem("menuImagePreviews");
+    }
+  }, [imagePreviews]);
+
+  useEffect(() => {
+    if (menuText) {
+      sessionStorage.setItem("menuText", menuText);
+    } else {
+      sessionStorage.removeItem("menuText");
+    }
+  }, [menuText]);
 
   const processImageFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
