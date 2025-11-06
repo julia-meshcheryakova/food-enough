@@ -210,9 +210,9 @@ export default function ProfileSetup() {
             </p>
 
             {/* Quick Profile Presets */}
-            <Card className="mt-6 bg-gradient-card border-primary/20">
+            <Card className="mt-6 bg-primary/5 border-2 border-primary/30 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg">Quick Start Profiles</CardTitle>
+                <CardTitle className="text-lg text-primary">Quick Start Profiles</CardTitle>
                 <CardDescription>Load a preset profile and customize it</CardDescription>
               </CardHeader>
               <CardContent>
