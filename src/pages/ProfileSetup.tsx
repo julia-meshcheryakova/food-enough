@@ -247,8 +247,9 @@ export default function ProfileSetup() {
     setList: (list: string[]) => void,
     setValue: (val: string) => void,
   ) => {
-    if (value.trim() && !list.includes(value.trim())) {
-      setList([...list, value.trim()]);
+    const normalized = value.trim().toLowerCase();
+    if (normalized && !list.includes(normalized)) {
+      setList([...list, normalized]);
       setValue("");
     }
   };
