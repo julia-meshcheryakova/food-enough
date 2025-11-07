@@ -96,10 +96,12 @@ serve(async (req) => {
       allergyMatches.forEach((a) => reasoning.push(`⚠️ Contains allergen: ${a}`));
       score += allergyMatches.length * SCORE.ALLERGEN;
 
-      // ---- Restrictions ----
-      const restrictionMatches = includesAny(ingredientsLower, safeProfile.restrictions);
-      restrictionMatches.forEach((r) => reasoning.push(`May conflict with restriction: ${r}`));
-      score += restrictionMatches.length * SCORE.RESTRICTION;
+      // ---- Restrictions (check both ingredients and tags) ----
+      const restrictionIngredientsMatches = includesAny(ingredientsLower, safeProfile.restrictions);
+      const restrictionTagsMatches = includesAny(tagsLower, safeProfile.restrictions);
+      const allRestrictionMatches = [...new Set([...restrictionIngredientsMatches, ...restrictionTagsMatches])];
+      allRestrictionMatches.forEach((r) => reasoning.push(`May conflict with restriction: ${r}`));
+      score += allRestrictionMatches.length * SCORE.RESTRICTION;
 
       if (reasoning.length === 0) reasoning.push("Good general choice");
 
