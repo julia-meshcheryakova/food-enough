@@ -11,6 +11,7 @@ import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Utensils, Flame, Star, AlertCircle, Loader2 } from "lucide-react";
+import { capitalize } from "@/lib/utils";
 
 interface Dish {
   name: string;
@@ -80,8 +81,13 @@ export default function Results() {
         const profile = JSON.parse(profileData);
         const menu = JSON.parse(menuData);
         
+        // Validate menu is an array of dishes
+        if (!Array.isArray(menu)) {
+          throw new Error('Invalid menu data format');
+        }
+        
         // Store all menu dishes for category filtering
-        setAllMenuDishes(menu.dishes || menu);
+        setAllMenuDishes(menu);
         
         // Update profile name state
         setProfileName(profile.name || "");
@@ -261,7 +267,7 @@ export default function Results() {
                             className="text-sm font-medium cursor-pointer flex items-center gap-1"
                           >
                             {getCategoryIcon(category)}
-                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                            {capitalize(category)}
                           </Label>
                         </div>
                       ))}
