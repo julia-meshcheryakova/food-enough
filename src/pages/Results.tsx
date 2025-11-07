@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Utensils, Flame, Star, AlertCircle, Loader2 } from "lucide-react";
@@ -29,8 +31,34 @@ interface Dish {
 export default function Results() {
   const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState<Dish[]>([]);
+  const [allMenuDishes, setAllMenuDishes] = useState<Dish[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [profileName, setProfileName] = useState<string>("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  // Extract unique categories from all menu dishes
+  const availableCategories = useMemo(() => {
+    const categories = allMenuDishes.map(dish => dish.category);
+    return [...new Set(categories)].sort();
+  }, [allMenuDishes]);
+
+  // Filter recommendations based on selected categories
+  const filteredRecommendations = useMemo(() => {
+    if (selectedCategories.length === 0) {
+      return recommendations;
+    }
+    return recommendations.filter(dish => 
+      selectedCategories.includes(dish.category)
+    );
+  }, [recommendations, selectedCategories]);
+
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -51,6 +79,9 @@ export default function Results() {
 
         const profile = JSON.parse(profileData);
         const menu = JSON.parse(menuData);
+        
+        // Store all menu dishes for category filtering
+        setAllMenuDishes(menu.dishes || menu);
         
         // Update profile name state
         setProfileName(profile.name || "");
@@ -209,8 +240,56 @@ export default function Results() {
             </Card>
           ) : (
             <>
-              <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3 mb-8">
-                {recommendations.map((dish, index) => (
+              {/* Category Filter */}
+              {availableCategories.length > 0 && (
+                <Card className="mb-8 shadow-soft">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Filter by Category</CardTitle>
+                    <CardDescription>Select one or more dish categories to filter results</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-3">
+                      {availableCategories.map((category) => (
+                        <div key={category} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`category-${category}`}
+                            checked={selectedCategories.includes(category)}
+                            onCheckedChange={() => toggleCategory(category)}
+                          />
+                          <Label
+                            htmlFor={`category-${category}`}
+                            className="text-sm font-medium cursor-pointer flex items-center gap-1"
+                          >
+                            {getCategoryIcon(category)}
+                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    {selectedCategories.length > 0 && (
+                      <div className="mt-3 text-sm text-muted-foreground">
+                        Showing {filteredRecommendations.length} of {recommendations.length} recommendations
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+              
+              {filteredRecommendations.length === 0 ? (
+                <Card>
+                  <CardContent className="text-center py-12">
+                    <AlertCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-lg text-muted-foreground mb-4">
+                      No dishes match the selected categories. Try selecting different categories.
+                    </p>
+                    <Button onClick={() => setSelectedCategories([])}>
+                      Clear Filters
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3 mb-8">
+                  {filteredRecommendations.map((dish, index) => (
                   <Card key={index} className="overflow-hidden">
                     <CardHeader className="p-0">
                       {dish.imageUrl ? (
@@ -297,7 +376,8 @@ export default function Results() {
                     </CardContent>
                   </Card>
                 ))}
-              </div>
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
