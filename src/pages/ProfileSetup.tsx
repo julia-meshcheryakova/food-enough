@@ -265,6 +265,7 @@ export default function ProfileSetup() {
       hatedIngredients,
       favoriteIngredients,
       goals,
+      excludedCategories: [], // Categories to exclude from recommendations (not exposed in UI yet)
       savedAt: new Date().toISOString(),
     };
 
@@ -295,6 +296,7 @@ export default function ProfileSetup() {
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
+      excludedCategories: [], // Categories to exclude from recommendations (not exposed in UI yet)
       savedAt: new Date().toISOString(),
     };
 

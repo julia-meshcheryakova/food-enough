@@ -132,7 +132,7 @@ serve(async (req) => {
 - description: string (brief description)
 - ingredients: array of strings (RAW ingredients only, e.g., "eggs" not "fried eggs", "chicken" not "grilled chicken, "pork" not "bacon")
 - probable_ingredients: array of strings (standard ingredients typically used but not listed for the dish, e.g., "oil", "salt", "sugar", "butter" or "beef" for "beef burger")
-- category: string (starter, main, dessert, beverage, side, or other)
+- category: string (must be one of: starter, appetizer, main, main course, dessert, beverage, side, soup, salad, dumplings, noodles, rice, pasta, pizza, sandwich, burger, taco, wrap, sushi, dim sum, breakfast, brunch, snack, or other)
 - calories: number (estimate if not provided, typical range 200-800)
 - allergens: array of strings (common allergens: dairy, gluten, nuts, shellfish, eggs, soy)
 - tags: array of strings (cooking methods like "fried", "grilled", "baked", plus dietary tags like "spicy", "vegetarian", "vegan", "alcohol")
@@ -141,6 +141,7 @@ IMPORTANT:
 - For ingredients, use ONLY raw ingredient names without any descriptors: eggs - not poached eggs, salmon - not smoked salmon, coffee - not espresson or latte
 - Move all cooking methods and descriptors (fried, grilled, roasted, fresh, etc.) to tags
 - In probable_ingredients, list common cooking staples typically used and ingridients for standard receipts that were not explicitly mentioned
+- Category must be one of the specified values and in lowercase
 
 Menu text:
 ${menuText}
