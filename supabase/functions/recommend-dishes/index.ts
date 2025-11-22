@@ -23,6 +23,7 @@ interface Profile {
   hatedIngredients: string[];
   favoriteIngredients: string[];
   goals: string[];
+  excludedCategories?: string[];
 }
 
 interface Dish {
@@ -66,12 +67,24 @@ serve(async (req) => {
       hatedIngredients: profile.hatedIngredients || [],
       favoriteIngredients: profile.favoriteIngredients || [],
       goals: profile.goals || [],
+      excludedCategories: profile.excludedCategories || [],
     };
 
     console.log("Received profile:", safeProfile);
     console.log("Received menu with", menu.length, "dishes");
 
-    const scoredDishes: ScoredDish[] = menu.map((dish) => {
+    // Filter out excluded categories first
+    const filteredMenu = menu.filter((dish) => {
+      const categoryLower = dish.category.toLowerCase();
+      const isExcluded = safeProfile.excludedCategories.some(
+        (excluded) => excluded.toLowerCase() === categoryLower
+      );
+      return !isExcluded;
+    });
+
+    console.log("After category filtering:", filteredMenu.length, "dishes");
+
+    const scoredDishes: ScoredDish[] = filteredMenu.map((dish) => {
       let score = 0;
       const reasoning: string[] = [];
 
