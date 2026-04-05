@@ -60,11 +60,6 @@ export default function Results() {
           excludedCategories: profile.excludedCategories,
         };
 
-        console.log("Calling recommend-dishes with:", { 
-          profileName: profile.name,
-          dishCount: menu.dishes?.length 
-        });
-
         const { data, error } = await supabase.functions.invoke('recommend-dishes', {
           body: { profile: profilePayload, menu }
         });
@@ -73,8 +68,6 @@ export default function Results() {
           console.error("Error from recommend-dishes:", error);
           throw error;
         }
-
-        console.log("Received recommendations:", data);
 
         // Set recommendations immediately (with or without images)
         const initialRecommendations = data.recommendations.map((dish: Dish) => ({
@@ -89,8 +82,6 @@ export default function Results() {
           if (!dish.imageUrl && dish.name && dish.description) {
             (async () => {
               try {
-                console.log(`Generating image for: ${dish.name}`);
-                
                 // Add 30 second timeout to prevent infinite loading
                 const timeoutPromise = new Promise((_, reject) => 
                   setTimeout(() => reject(new Error('Image generation timeout')), 30000)
@@ -121,8 +112,6 @@ export default function Results() {
                   return;
                 }
 
-                console.log(`Image generated for ${dish.name}:`, imageData?.cached ? 'cached' : 'new');
-                
                 // Update the specific dish with the generated image
                 setRecommendations((prev) =>
                   prev.map((d, i) =>
