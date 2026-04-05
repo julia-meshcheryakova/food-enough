@@ -62,6 +62,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          id: string
+          restrictions: string[]
+          hated_ingredients: string[]
+          favorite_ingredients: string[]
+          goals: string[]
+          excluded_categories: string[]
+          profile_name: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          restrictions?: string[]
+          hated_ingredients?: string[]
+          favorite_ingredients?: string[]
+          goals?: string[]
+          excluded_categories?: string[]
+          profile_name?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          restrictions?: string[]
+          hated_ingredients?: string[]
+          favorite_ingredients?: string[]
+          goals?: string[]
+          excluded_categories?: string[]
+          profile_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

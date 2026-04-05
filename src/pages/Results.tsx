@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Utensils, Flame, Star, AlertCircle, Loader2 } from "lucide-react";
+import { useProfile } from "@/hooks/useProfile";
 
 interface Dish {
   name: string;
@@ -28,41 +29,44 @@ interface Dish {
 
 export default function Results() {
   const navigate = useNavigate();
+  const { profile } = useProfile();
   const [recommendations, setRecommendations] = useState<Dish[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [profileName, setProfileName] = useState<string>("");
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        // Get profile and menu from localStorage
-        const profileData = localStorage.getItem('foodEnoughProfile');
         const menuData = localStorage.getItem('parsedMenu');
 
-        if (!profileData || !menuData) {
+        if (!menuData) {
           toast({
             title: "Missing data",
-            description: "Please complete your profile and upload a menu first.",
+            description: "Please upload a menu first.",
             variant: "destructive",
           });
-          navigate('/profile');
+          navigate('/menu');
           return;
         }
 
-        const profile = JSON.parse(profileData);
         const menu = JSON.parse(menuData);
-        
-        // Update profile name state
-        setProfileName(profile.name || "");
+
+        // Build profile object for the edge function
+        const profilePayload = {
+          name: profile.name,
+          restrictions: profile.restrictions,
+          hatedIngredients: profile.hatedIngredients,
+          favoriteIngredients: profile.favoriteIngredients,
+          goals: profile.goals,
+          excludedCategories: profile.excludedCategories,
+        };
 
         console.log("Calling recommend-dishes with:", { 
           profileName: profile.name,
           dishCount: menu.dishes?.length 
         });
 
-        // Call the recommend-dishes edge function (returns immediately with cached images)
         const { data, error } = await supabase.functions.invoke('recommend-dishes', {
-          body: { profile, menu }
+          body: { profile: profilePayload, menu }
         });
 
         if (error) {
@@ -176,7 +180,7 @@ export default function Results() {
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-foreground mb-3">Your Top Recommendations</h1>
             <p className="text-lg text-muted-foreground">
-              {profileName ? `Personalized for ${profileName}` : "Based on your preferences and dietary requirements"}
+              {profile.name && profile.name !== "Custom" ? `Personalized for ${profile.name}` : "Based on your preferences and dietary requirements"}
             </p>
           </div>
 
@@ -257,7 +261,7 @@ export default function Results() {
                           <h4 className="font-semibold text-xs mb-1">Ingredients:</h4>
                           <div className="flex flex-wrap gap-1">
                             {[...dish.ingredients, ...(dish.probable_ingredients || [])].map((ingredient, i) => {
-                              const isFavorite = profileName && JSON.parse(localStorage.getItem('foodEnoughProfile') || '{}').favoriteIngredients?.includes(ingredient);
+                              const isFavorite = profile.favoriteIngredients?.includes(ingredient);
                               return (
                                 <Badge 
                                   key={i} 
