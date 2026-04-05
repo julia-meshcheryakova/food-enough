@@ -57,8 +57,10 @@ serve(async (req) => {
 
   try {
     const { profile, menu } = (await req.json()) as { profile: Profile; menu: Dish[] };
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    
+    // Validate we have AI access (for future AI-powered recommendations)
+    const hasAIKey = Deno.env.get("GOOGLE_AI_API_KEY") || Deno.env.get("LOVABLE_API_KEY");
+    if (!hasAIKey) console.warn("No AI API key configured — scoring only uses rule-based matching");
 
     // Ensure all profile arrays have default values
     const safeProfile = {
