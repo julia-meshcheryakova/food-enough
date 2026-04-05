@@ -1,35 +1,59 @@
 # Food Enough – AI Waiter & Menu Assistant
-[Live Demo](https://food-enough.lovable.app)
 
----
+Your AI-powered dining assistant. Upload a menu, get personalised dish recommendations based on your dietary profile.
 
-## 🚀 Overview  
-Food Enough is an AI-powered dining assistant designed to help users with dietary restrictions, allergies, or specific food preferences confidently pick the right dishes when dining out — even when travelling or facing a menu in a foreign language.  
-Users create a food profile (allergies, hated/favourite ingredients, dietary goals), upload or take a photo of a restaurant menu, and receive personalised dish recommendations based on their profile. The system uses OCR, translation, dish-analysis and image generation to deliver smart, inclusive, and healthy dining suggestions.
+## Quick Start
 
----
+1. Copy `.env.example` to `.env` and fill in your Supabase credentials
+2. `npm install`
+3. `npm run dev`
+4. Open http://localhost:5173
 
-## 🎯 Core Features  
-- **User Profile** for food preferences: allergens, disliked / favourite ingredients, lifestyle goals.  
-- **Menu Upload & Analysis**: photo or text input of menu → parsed into structured dish information.  
-- **Recommendation Engine**: filters and ranks menu dishes to produce top-3 matches for the user.  
-- **Dish Visualisation**: generated high-quality dish images to enhance visual appeal.  
-- **Restaurant Mode** (planned): allow restaurants to embed the assistant for guest-facing experiences.
+## Required Services
 
----
+### Supabase
+Create a project at [supabase.com](https://supabase.com) and set:
+- `VITE_SUPABASE_URL` — your project URL
+- `VITE_SUPABASE_PUBLISHABLE_KEY` — your anon/public key
 
-## 🧪 Demo Flow  
-1. Set up a profile: specify allergies, hates, favourites, and goals → `/profile`.  
-2. Upload a menu image or paste text → `/menu`.  
-3. Receive top-3 dish recommendations with reasoning and images.  
-4. (Future) Chat with the “AI Waiter” for follow-up questions or special requests.
+### Google AI API Key (for Gemini)
+Set `GOOGLE_AI_API_KEY` as a **Supabase Edge Function secret** (not in `.env`):
+```bash
+supabase secrets set GOOGLE_AI_API_KEY=your_key
+```
+This powers menu parsing and dish image generation via Supabase Edge Functions.
 
----
+## SQL Migrations
 
-## 🔧 Tech Stack  
-- **Frontend:** Built with Lovable (React/Next.js) — rapid UI prototyping and flow design.  
-- **Backend:** Deno HTTP server handling API endpoints (menu parsing, dish scoring, image generation).  
-- **AI Services:**  
-  - OCR & translation → Google Gemini 2.5 Flash Lite  
-  - Dish image generation → Gemini 2.5 Flash Image  
-- **Hosting:** Demo version hosted via Lovable → Vercel/Deno-Deploy ready for export.  
+Run these in your Supabase SQL editor (in order):
+1. `supabase/migrations/001_profiles.sql` — user profiles table + RLS
+2. `supabase/migrations/002_usage.sql` — usage tracking table + RLS
+3. `supabase/migrations/20251101130013_*.sql` — menu parse cache table
+4. `supabase/migrations/20251101151942_*.sql` — dish image cache table
+
+## Edge Functions
+
+Deploy with `supabase functions deploy`:
+- `parse-menu` — OCR + AI menu parsing (Gemini)
+- `recommend-dishes` — rule-based dish scoring + ranking
+- `generate-dish-image` — AI dish image generation (Gemini)
+- `clear-menu-cache` — admin: clear parse cache
+- `clear-dish-image-cache` — admin: clear image cache
+
+## Features
+
+- **Landing page** with pricing (Free vs Premium)
+- **Auth** — email/password + Google OAuth via Supabase
+- **Profile** — dietary restrictions, allergens, favourites, goals
+- **Menu upload** — photo or text, parsed by Gemini AI
+- **Smart recommendations** — top 3 dishes scored against your profile
+- **AI dish images** — generated visuals for recommended dishes
+- **Usage tracking** — 5 free analyses/month, paywall for premium
+- **Responsive** — works on mobile and desktop
+
+## Tech Stack
+
+- React 18 + TypeScript + Vite
+- Tailwind CSS + shadcn/ui
+- Supabase (Auth, Database, Edge Functions)
+- Google Gemini AI (via Supabase Edge Functions)
