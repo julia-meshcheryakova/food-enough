@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { appConfig } from "@/config/app";
+import { useUsage } from "@/hooks/useUsage";
+import { Paywall } from "@/components/Paywall";
 
 interface Dish {
   name: string;
@@ -34,6 +36,7 @@ export default function MenuUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { usageCount, limit, remaining, isOverLimit, trackAnalysis } = useUsage();
 
   // Load saved images and text on mount
   useEffect(() => {
@@ -161,6 +164,15 @@ export default function MenuUpload() {
   };
 
   const analyzeMenu = async () => {
+    if (isOverLimit) {
+      toast({
+        title: "Free limit reached",
+        description: "You've used all your free analyses this month.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (imageFiles.length === 0 && !menuText.trim()) {
       toast({
         title: "No input provided",
@@ -218,6 +230,9 @@ export default function MenuUpload() {
 
       if (allDishes.length > 0) {
         setDishes(allDishes);
+
+        // Track usage
+        await trackAnalysis();
 
         // Store parsed menu in localStorage for Results page
         localStorage.setItem("parsedMenu", JSON.stringify(allDishes));
@@ -286,9 +301,16 @@ export default function MenuUpload() {
           <div className="mb-8 text-center">
             <h1 className="text-4xl font-bold text-foreground mb-3">Upload or scan a menu</h1>
             <p className="text-lg text-muted-foreground">AI-powered menu analysis</p>
+            {!isOverLimit && (
+              <p className="text-sm text-muted-foreground mt-2">
+                {remaining} of {limit} free analyses remaining this month
+              </p>
+            )}
           </div>
 
-          {!dishes.length ? (
+          {isOverLimit ? (
+            <Paywall usageCount={usageCount} limit={limit} />
+          ) : !dishes.length ? (
             <>
               <Card className="shadow-soft hover:shadow-hover transition-smooth">
                 <CardContent className="pt-8 pb-8">
