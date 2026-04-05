@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { Camera, CheckCircle, UserCircle, Sparkles } from "lucide-react";
+import { Camera, CheckCircle, UserCircle, Sparkles, Zap } from "lucide-react";
 import heroMenu from "@/assets/hero-menu.jpg";
-import appMockup from "@/assets/app-mockup.png";
 
 export default function Landing() {
   return (
@@ -143,6 +142,66 @@ export default function Landing() {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-4">
+              <Zap className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">Simple Pricing</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Start free, upgrade when you need more
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            <Card className="shadow-soft border-2">
+              <CardHeader className="text-center">
+                <CardTitle className="text-xl">Free</CardTitle>
+                <p className="text-3xl font-bold text-foreground">$0</p>
+                <p className="text-sm text-muted-foreground">per month</p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {["5 menu analyses per month", "Allergen & restriction checking", "Personalized recommendations", "Profile saved across sessions"].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">{item}</span>
+                  </div>
+                ))}
+                <div className="pt-4">
+                  <Link to="/auth">
+                    <Button variant="outline" className="w-full">Get Started</Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-soft border-2 border-primary/30 relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">Coming Soon</span>
+              </div>
+              <CardHeader className="text-center">
+                <CardTitle className="text-xl">Premium</CardTitle>
+                <p className="text-3xl font-bold text-foreground">$4.99</p>
+                <p className="text-sm text-muted-foreground">per month</p>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {["Unlimited menu analyses", "AI-generated dish images", "Priority processing", "Everything in Free"].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm">{item}</span>
+                  </div>
+                ))}
+                <div className="pt-4">
+                  <Button className="w-full" disabled>Coming Soon</Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
