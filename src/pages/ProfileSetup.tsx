@@ -11,6 +11,7 @@ import { X, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { filterConflictingIngredients } from "@/lib/ingredientMapping";
+import { useProfile } from "@/hooks/useProfile";
 
 const COMMON_RESTRICTIONS = [
   "gluten",
@@ -132,6 +133,7 @@ const PRESET_PROFILES = {
 export default function ProfileSetup() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { profile: savedProfile, loading: profileLoading, saveProfile } = useProfile();
 
   const [restrictions, setRestrictions] = useState<string[]>([]);
   const [hatedIngredients, setHatedIngredients] = useState<string[]>([]);
@@ -140,30 +142,24 @@ export default function ProfileSetup() {
   const [newHated, setNewHated] = useState("");
   const [newFavorite, setNewFavorite] = useState("");
 
-  // Load existing profile from localStorage on mount, or default to balancedAdult
+  // Load profile from hook (Supabase or localStorage)
   useEffect(() => {
-    const savedProfile = localStorage.getItem("foodEnoughProfile");
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        // Merge old allergies and restrictions if they exist separately
-        const combinedRestrictions = [...(profile.restrictions || []), ...(profile.allergies || [])];
-        setRestrictions([...new Set(combinedRestrictions)]); // Remove duplicates
-        setHatedIngredients(profile.hatedIngredients || []);
-        setFavoriteIngredients(profile.favoriteIngredients || []);
-        setGoals(profile.goals || []);
-      } catch (error) {
-        console.error("Failed to load saved profile:", error);
+    if (!profileLoading) {
+      if (savedProfile.restrictions.length > 0 || savedProfile.favoriteIngredients.length > 0 || savedProfile.goals.length > 0) {
+        setRestrictions(savedProfile.restrictions);
+        setHatedIngredients(savedProfile.hatedIngredients);
+        setFavoriteIngredients(savedProfile.favoriteIngredients);
+        setGoals(savedProfile.goals);
+      } else {
+        // No saved profile, load balancedAdult as default
+        const preset = PRESET_PROFILES.balancedAdult;
+        setRestrictions([...preset.allergies, ...preset.restrictions]);
+        setHatedIngredients(preset.hatedIngredients);
+        setFavoriteIngredients(preset.favoriteIngredients);
+        setGoals(preset.goals);
       }
-    } else {
-      // No saved profile, load balancedAdult as default
-      const preset = PRESET_PROFILES.balancedAdult;
-      setRestrictions([...preset.allergies, ...preset.restrictions]);
-      setHatedIngredients(preset.hatedIngredients);
-      setFavoriteIngredients(preset.favoriteIngredients);
-      setGoals(preset.goals);
     }
-  }, []);
+  }, [profileLoading, savedProfile]);
 
   const toggleRestriction = (item: string) => {
     if (restrictions.includes(item)) {
@@ -258,18 +254,17 @@ export default function ProfileSetup() {
     setList(list.filter((i) => i !== ingredient));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const profile = {
       name: sessionStorage.getItem("currentProfileName") || "Custom",
       restrictions,
       hatedIngredients,
       favoriteIngredients,
       goals,
-      excludedCategories: [], // Categories to exclude from recommendations (not exposed in UI yet)
-      savedAt: new Date().toISOString(),
+      excludedCategories: [],
     };
 
-    localStorage.setItem("foodEnoughProfile", JSON.stringify(profile));
+    await saveProfile(profile);
 
     toast({
       title: "Profile saved!",
@@ -284,23 +279,21 @@ export default function ProfileSetup() {
 
   const loadPreset = (presetKey: keyof typeof PRESET_PROFILES) => {
     const preset = PRESET_PROFILES[presetKey];
-    setRestrictions([...preset.allergies, ...preset.restrictions]);
+    const newRestrictions = [...preset.allergies, ...preset.restrictions];
+    setRestrictions(newRestrictions);
     setHatedIngredients(preset.hatedIngredients);
     setFavoriteIngredients(preset.favoriteIngredients);
     setGoals(preset.goals);
 
-    // Auto-save preset profile to session
-    const profile = {
+    // Save preset profile
+    saveProfile({
       name: preset.name,
-      restrictions: [...preset.allergies, ...preset.restrictions],
+      restrictions: newRestrictions,
       hatedIngredients: preset.hatedIngredients,
       favoriteIngredients: preset.favoriteIngredients,
       goals: preset.goals,
-      excludedCategories: [], // Categories to exclude from recommendations (not exposed in UI yet)
-      savedAt: new Date().toISOString(),
-    };
-
-    localStorage.setItem("foodEnoughProfile", JSON.stringify(profile));
+      excludedCategories: [],
+    });
     sessionStorage.setItem("currentProfileName", preset.name);
 
     toast({
