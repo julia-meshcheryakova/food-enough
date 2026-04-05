@@ -7,7 +7,28 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const MODEL_NAME = "google/gemini-2.5-flash-lite";
+const MODEL_NAME = "gemini-2.5-flash-lite";
+
+// AI provider config: prefer GOOGLE_AI_API_KEY, fall back to LOVABLE_API_KEY
+function getAIConfig() {
+  const googleKey = Deno.env.get("GOOGLE_AI_API_KEY");
+  if (googleKey) {
+    return {
+      apiKey: googleKey,
+      baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
+      modelName: "gemini-2.5-flash-lite",
+    };
+  }
+  const lovableKey = Deno.env.get("LOVABLE_API_KEY");
+  if (lovableKey) {
+    return {
+      apiKey: lovableKey,
+      baseUrl: "https://ai.gateway.lovable.dev/v1",
+      modelName: "google/gemini-2.5-flash-lite",
+    };
+  }
+  throw new Error("No AI API key configured. Set GOOGLE_AI_API_KEY or LOVABLE_API_KEY.");
+}
 
 // Helper function to calculate SHA-256 hash
 async function calculateHash(data: string): Promise<string> {
@@ -25,13 +46,9 @@ serve(async (req) => {
 
   try {
     const { image, text, useCache = true } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const ai = getAIConfig();
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
-
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
-    }
 
     // Initialize Supabase client
     const supabase = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!);
@@ -70,14 +87,14 @@ serve(async (req) => {
     if (image) {
       console.log("Extracting text from image...");
 
-      const ocrResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const ocrResponse = await fetch(`${ai.baseUrl}/chat/completions`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          Authorization: `Bearer ${ai.apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: MODEL_NAME,
+          model: ai.modelName,
           messages: [
             {
               role: "user",
@@ -112,14 +129,14 @@ serve(async (req) => {
     // Parse the menu text into structured data
     console.log("Parsing menu into structured format...");
 
-    const parseResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const parseResponse = await fetch(`${ai.baseUrl}/chat/completions`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${ai.apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: MODEL_NAME,
+        model: ai.modelName,
         messages: [
           {
             role: "system",
