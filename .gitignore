@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 supabase/.temp
+
+# Environment variables
+.env
+.env.local
+.env.*.local
