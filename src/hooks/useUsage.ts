@@ -50,11 +50,12 @@ export function useUsage() {
       action: "menu_analysis",
     });
 
-    if (!error) {
-      setUsageCount((prev) => prev + 1);
-      return true;
-    }
-    return false;
+    // Don't block the user on a backend that can't count — worst case the
+    // free tier is un-metered until the usage table exists.
+    if (error) return true;
+
+    setUsageCount((prev) => prev + 1);
+    return true;
   }, [user, usageCount]);
 
   return {
