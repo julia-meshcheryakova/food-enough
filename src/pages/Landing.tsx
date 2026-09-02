@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { Camera, CheckCircle, UserCircle, Sparkles, Zap } from "lucide-react";
+import { Camera, CheckCircle, UserCircle, Sparkles, Zap, Smartphone } from "lucide-react";
 import heroMenu from "@/assets/hero-menu.jpg";
 
 export default function Landing() {
@@ -22,12 +22,21 @@ export default function Landing() {
             <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
               Upload any menu or snap a photo. Get instant recommendations based on your taste, diet, and allergies.
             </p>
-            <div>
+            <div className="flex flex-col items-center gap-3">
               <Link to="/profile">
                 <Button variant="hero" size="lg" className="shadow-hover">
                   Try It Now
                 </Button>
               </Link>
+              <a
+                href="https://github.com/awkward-robin/food-enough/releases/download/android-latest/food-enough.apk"
+                className="inline-flex"
+              >
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Smartphone className="w-4 h-4" />
+                  Download Android APK
+                </Button>
+              </a>
             </div>
           </div>
         </div>
