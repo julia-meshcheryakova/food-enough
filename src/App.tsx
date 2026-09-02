@@ -20,7 +20,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      {/* Pages serves the app under /<repo>/, so the router needs the same prefix Vite built with. */}
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Landing />} />
