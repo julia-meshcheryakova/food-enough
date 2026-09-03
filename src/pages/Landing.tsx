@@ -164,7 +164,7 @@ export default function Landing() {
               <span className="text-sm font-medium text-primary">Simple Pricing</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Start free, upgrade when you need more
+              Start free, buy a trip pass when you travel
             </h2>
           </div>
 
@@ -172,19 +172,19 @@ export default function Landing() {
             <Card className="shadow-soft border-2">
               <CardHeader className="text-center">
                 <CardTitle className="text-xl">Free</CardTitle>
-                <p className="text-3xl font-bold text-foreground">$0</p>
-                <p className="text-sm text-muted-foreground">per month</p>
+                <p className="text-3xl font-bold text-foreground">£0</p>
+                <p className="text-sm text-muted-foreground">2 analyses, free forever</p>
               </CardHeader>
               <CardContent className="space-y-3">
-                {["5 menu analyses per month", "Allergen & restriction checking", "Personalized recommendations", "Profile saved across sessions"].map((item, i) => (
+                {["2 free menu analyses", "Allergen & restriction checking", "Personalized recommendations", "Profile saved across sessions"].map((item, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm">{item}</span>
                   </div>
                 ))}
                 <div className="pt-4">
-                  <Link to="/auth">
-                    <Button variant="outline" className="w-full">Get Started</Button>
+                  <Link to="/profile">
+                    <Button variant="outline" className="w-full">Try It Now</Button>
                   </Link>
                 </div>
               </CardContent>
@@ -195,12 +195,12 @@ export default function Landing() {
                 <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">Coming Soon</span>
               </div>
               <CardHeader className="text-center">
-                <CardTitle className="text-xl">Premium</CardTitle>
-                <p className="text-3xl font-bold text-foreground">$4.99</p>
-                <p className="text-sm text-muted-foreground">per month</p>
+                <CardTitle className="text-xl">Trip Pass</CardTitle>
+                <p className="text-3xl font-bold text-foreground">£3.99</p>
+                <p className="text-sm text-muted-foreground">7 days · or £6.99 for 30 days</p>
               </CardHeader>
               <CardContent className="space-y-3">
-                {["Unlimited menu analyses", "AI-generated dish images", "Priority processing", "Everything in Free"].map((item, i) => (
+                {["Unlimited menu analyses", "AI-generated dish images", "Priority processing", "No subscription — pay once per trip"].map((item, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm">{item}</span>

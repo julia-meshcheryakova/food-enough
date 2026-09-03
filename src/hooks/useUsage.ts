@@ -1,70 +1,43 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 
-const FREE_ANALYSES_PER_MONTH = 5;
+const FREE_ANALYSES_LIFETIME = 2;
+const STORAGE_KEY = "foodEnoughAnalyses"; // lifetime count, guests + fallback
+
+/** Lifetime free-analysis cap, counted client-side in localStorage.
+ *  The `usage` table doesn't exist in Supabase, and trip passes aren't wired to
+ *  payment yet — so localStorage is the source of truth and we never block on a
+ *  backend error. Guests and signed-in users share the same local cap for now. */
+function readLocalCount(): number {
+  const n = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+  return Number.isFinite(n) ? n : 0;
+}
 
 export function useUsage() {
-  const { user } = useAuth();
   const [usageCount, setUsageCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const loadUsage = useCallback(async () => {
-    if (!user) {
-      setUsageCount(0);
-      setLoading(false);
-      return;
-    }
-
-    // Count analyses this calendar month
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-
-    const { count, error } = await supabase
-      .from("usage")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .eq("action", "menu_analysis")
-      .gte("created_at", monthStart);
-
-    if (!error && count !== null) {
-      setUsageCount(count);
-    }
-    setLoading(false);
-  }, [user]);
-
   useEffect(() => {
-    loadUsage();
-  }, [loadUsage]);
+    setUsageCount(readLocalCount());
+    setLoading(false);
+  }, []);
 
   const trackAnalysis = useCallback(async () => {
-    if (!user) return false;
+    const current = readLocalCount();
+    if (current >= FREE_ANALYSES_LIFETIME) return false; // over lifetime cap
 
-    // Check limit first
-    if (usageCount >= FREE_ANALYSES_PER_MONTH) {
-      return false; // Over limit
-    }
-
-    const { error } = await supabase.from("usage").insert({
-      user_id: user.id,
-      action: "menu_analysis",
-    });
-
-    // Don't block the user on a backend that can't count — worst case the
-    // free tier is un-metered until the usage table exists.
-    if (error) return true;
-
-    setUsageCount((prev) => prev + 1);
+    const next = current + 1;
+    localStorage.setItem(STORAGE_KEY, String(next));
+    setUsageCount(next);
     return true;
-  }, [user, usageCount]);
+  }, []);
 
   return {
     usageCount,
-    limit: FREE_ANALYSES_PER_MONTH,
-    remaining: Math.max(0, FREE_ANALYSES_PER_MONTH - usageCount),
-    isOverLimit: usageCount >= FREE_ANALYSES_PER_MONTH,
+    limit: FREE_ANALYSES_LIFETIME,
+    remaining: Math.max(0, FREE_ANALYSES_LIFETIME - usageCount),
+    isOverLimit: usageCount >= FREE_ANALYSES_LIFETIME,
     loading,
     trackAnalysis,
-    reload: loadUsage,
+    reload: () => setUsageCount(readLocalCount()),
   };
 }

@@ -167,7 +167,7 @@ export default function MenuUpload() {
     if (isOverLimit) {
       toast({
         title: "Free limit reached",
-        description: "You've used all your free analyses this month.",
+        description: "You've used all your free analyses.",
         variant: "destructive",
       });
       return;
@@ -303,7 +303,7 @@ export default function MenuUpload() {
             <p className="text-lg text-muted-foreground">AI-powered menu analysis</p>
             {!isOverLimit && (
               <p className="text-sm text-muted-foreground mt-2">
-                {remaining} of {limit} free analyses remaining this month
+                {remaining} of {limit} free analyses remaining
               </p>
             )}
           </div>
