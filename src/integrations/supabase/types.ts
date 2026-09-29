@@ -116,6 +116,45 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_pass: {
+        Row: {
+          id: string
+          user_id: string | null
+          guest_id: string | null
+          tier: string
+          starts_at: string
+          expires_at: string
+          stripe_checkout_session_id: string
+          stripe_payment_intent_id: string | null
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          guest_id?: string | null
+          tier: string
+          starts_at?: string
+          expires_at: string
+          stripe_checkout_session_id: string
+          stripe_payment_intent_id?: string | null
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          guest_id?: string | null
+          tier?: string
+          starts_at?: string
+          expires_at?: string
+          stripe_checkout_session_id?: string
+          stripe_payment_intent_id?: string | null
+          status?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

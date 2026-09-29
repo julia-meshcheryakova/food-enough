@@ -23,6 +23,18 @@ supabase secrets set GOOGLE_AI_API_KEY=your_key
 ```
 This powers menu parsing and dish image generation via Supabase Edge Functions.
 
+### Stripe (Trip Pass payments)
+Set these as **Supabase Edge Function secrets**:
+```bash
+supabase secrets set STRIPE_SECRET_KEY=your_stripe_secret_key
+supabase secrets set STRIPE_WEBHOOK_SECRET=your_stripe_webhook_signing_secret
+```
+`create-checkout` uses `STRIPE_SECRET_KEY` to create Checkout Sessions.
+`stripe-webhook` uses `STRIPE_WEBHOOK_SECRET` to verify signed events from a
+Stripe webhook endpoint pointed at
+`https://<project-ref>.supabase.co/functions/v1/stripe-webhook`
+(listening for `checkout.session.completed`).
+
 ## SQL Migrations
 
 Run these in your Supabase SQL editor (in order):
@@ -30,6 +42,7 @@ Run these in your Supabase SQL editor (in order):
 2. `supabase/migrations/002_usage.sql` — usage tracking table + RLS
 3. `supabase/migrations/20251101130013_*.sql` — menu parse cache table
 4. `supabase/migrations/20251101151942_*.sql` — dish image cache table
+5. `supabase/migrations/003_trip_pass.sql` — Trip Pass table + RLS
 
 ## Edge Functions
 
@@ -39,6 +52,8 @@ Deploy with `supabase functions deploy`:
 - `generate-dish-image` — AI dish image generation (Gemini)
 - `clear-menu-cache` — admin: clear parse cache
 - `clear-dish-image-cache` — admin: clear image cache
+- `create-checkout` — creates a Stripe Checkout Session for a Trip Pass (7/30 day tiers)
+- `stripe-webhook` — verifies Stripe signatures and activates the Trip Pass on `checkout.session.completed`
 
 ## Features
 
