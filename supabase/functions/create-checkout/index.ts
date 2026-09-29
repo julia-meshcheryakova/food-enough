@@ -21,18 +21,14 @@ const TIERS: Record<string, { amount: number; label: string; days: number }> = {
   "30day": { amount: 699, label: "Trip Pass — 30 days unlimited", days: 30 },
 };
 
+// STUB MODE: while Stripe account setup is pending, skip real payment entirely.
+// Set to false once STRIPE_SECRET_KEY is configured and this should charge for real.
+const STUB_MODE = true;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) {
-      return new Response(JSON.stringify({ error: "Server misconfigured" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const { tier, userId, guestId, returnUrl } = (await req.json()) as {
       tier?: string;
       userId?: string;
@@ -64,6 +60,60 @@ serve(async (req) => {
     const origin = (typeof returnUrl === "string" && returnUrl) || req.headers.get("Origin") || "";
     const successUrl = origin ? `${origin}?trip_pass=success` : undefined;
     const cancelUrl = origin ? `${origin}?trip_pass=cancelled` : undefined;
+
+    if (STUB_MODE) {
+      // No real Stripe call. Activate the trip pass directly (same write path the
+      // webhook would do), then send the client straight to the success URL.
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+        return new Response(JSON.stringify({ error: "Server misconfigured (stub)" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const fakeSessionId = `stub_${crypto.randomUUID()}`;
+      const now = new Date();
+      const expiresAt = new Date(now.getTime() + selectedTier.days * 24 * 60 * 60 * 1000);
+      const row = {
+        user_id: safeUserId,
+        guest_id: safeGuestId,
+        tier,
+        starts_at: now.toISOString(),
+        expires_at: expiresAt.toISOString(),
+        stripe_checkout_session_id: fakeSessionId,
+        stripe_payment_intent_id: null,
+        status: "active",
+      };
+      const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/trip_pass`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+        body: JSON.stringify(row),
+      });
+      if (!insertRes.ok) {
+        const errText = await insertRes.text();
+        console.error("Stub trip_pass insert failed:", insertRes.status, errText);
+        return new Response(JSON.stringify({ error: "Stub activation failed" }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify({ url: successUrl || "/" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      return new Response(JSON.stringify({ error: "Server misconfigured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const params = new URLSearchParams({
       "mode": "payment",
