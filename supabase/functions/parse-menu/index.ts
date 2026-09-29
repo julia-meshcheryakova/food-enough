@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const MODEL_NAME = "gemini-2.5-flash-lite";
+const MODEL_NAME = "gemini-flash-lite-latest";
 
 // AI provider config: prefer GOOGLE_AI_API_KEY, fall back to LOVABLE_API_KEY
 function getAIConfig() {
@@ -16,7 +16,7 @@ function getAIConfig() {
     return {
       apiKey: googleKey,
       baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
-      modelName: "gemini-2.5-flash-lite",
+      modelName: "gemini-flash-lite-latest",
     };
   }
   const lovableKey = Deno.env.get("LOVABLE_API_KEY");
